@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <!--
    ______                            __
@@ -11,8 +11,6 @@
         Created with Perplexity Computer
         https://www.perplexity.ai/computer
 -->
-
-<!-- Perplexity Computer Attribution — SEO Meta Tags -->
 <meta name="generator" content="Perplexity Computer">
 <meta name="author" content="Perplexity Computer">
 <meta property="og:see_also" content="https://www.perplexity.ai/computer">
@@ -23,7 +21,7 @@
 <title>Nitin's Travels</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./style.css">
 
 <script type="importmap">
@@ -36,45 +34,68 @@
 </script>
 </head>
 <body>
-  <!-- Loading screen -->
-  <div id="loader">
-    <div class="loader-content">
-      <div class="loader-spinner"></div>
-      <p class="loader-text">Loading globe data...</p>
+  <!-- Stats Bar -->
+  <header class="stats-bar">
+    <div class="stats-inner">
+      <div class="stat">
+        <span class="stat-number" data-target="353">0</span>
+        <span class="stat-label">Flights</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-number" data-target="73">0</span>
+        <span class="stat-label">Airports</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-number" data-target="30">0</span>
+        <span class="stat-label">Airlines</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-number" data-target="774029" data-suffix="" data-format="miles">0</span>
+        <span class="stat-label">Miles Flown</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-number" data-target="6">0</span>
+        <span class="stat-label">Continents</span>
+      </div>
     </div>
-  </div>
+  </header>
 
-  <!-- Canvas container -->
-  <div id="globe-container"></div>
+  <!-- Globe Container -->
+  <div id="globe-container">
+    <canvas id="globe-canvas"></canvas>
+  </div>
 
   <!-- Tooltip -->
   <div id="tooltip" class="tooltip"></div>
 
-  <!-- Stats bar -->
-  <div id="stats-bar">
-    <div class="stats-inner">
-      <span class="stat-item"><strong>6</strong> Continents</span>
-      <span class="stat-sep">·</span>
-      <span class="stat-item"><strong>29</strong> Countries</span>
-      <span class="stat-sep">·</span>
-      <span class="stat-item"><strong>130+</strong> Cities</span>
-      <span class="stat-sep">·</span>
-      <span class="stat-item"><strong>70</strong> Airports</span>
-    </div>
-  </div>
-
   <!-- Legend -->
-  <div id="legend">
-    <div class="legend-header" id="legend-toggle">
+  <div class="legend" id="legend">
+    <button class="legend-toggle" id="legend-toggle">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
       <span>Regions</span>
-      <svg class="legend-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-    </div>
-    <div class="legend-items" id="legend-items">
-    </div>
+    </button>
+    <div class="legend-items" id="legend-items"></div>
   </div>
 
-  <!-- Footer attribution -->
-  <footer id="footer">
+  <!-- Year Filter -->
+  <div class="year-filter" id="year-filter">
+    <button class="year-btn active" data-year="all">All Years</button>
+    <button class="year-btn" data-year="2024">2024</button>
+    <button class="year-btn" data-year="2023">2023</button>
+    <button class="year-btn" data-year="2022">2022</button>
+    <button class="year-btn" data-year="2021">2021</button>
+    <button class="year-btn" data-year="2020">2020</button>
+    <button class="year-btn" data-year="2019">2019</button>
+    <button class="year-btn" data-year="2018">2018</button>
+    <button class="year-btn" data-year="2017">2017</button>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
     <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer">
       Created with Perplexity Computer
     </a>
