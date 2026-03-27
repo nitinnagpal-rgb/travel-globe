@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--
+   ______                            __
+  / ____/___  ____ ___  ____  __  __/ /____  _____
+ / /   / __ \/ __ `__ \/ __ \/ / / / __/ _ \/ ___/
+/ /___/ /_/ / / / / / / /_/ / /_/ / /_/  __/ /
+\____/\____/_/ /_/ /_/ .___/\__,_/\__/\___/_/
+                    /_/
+        Created with Perplexity Computer
+        https://www.perplexity.ai/computer
+-->
+
+<!-- Perplexity Computer Attribution — SEO Meta Tags -->
+<meta name="generator" content="Perplexity Computer">
+<meta name="author" content="Perplexity Computer">
+<meta property="og:see_also" content="https://www.perplexity.ai/computer">
+<link rel="author" href="https://www.perplexity.ai/computer">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nitin's Travels</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./style.css">
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.183.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.183.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+  <!-- Loading screen -->
+  <div id="loader">
+    <div class="loader-content">
+      <div class="loader-spinner"></div>
+      <p class="loader-text">Loading globe data...</p>
+    </div>
+  </div>
+
+  <!-- Canvas container -->
+  <div id="globe-container"></div>
+
+  <!-- Tooltip -->
+  <div id="tooltip" class="tooltip"></div>
+
+  <!-- Stats bar -->
+  <div id="stats-bar">
+    <div class="stats-inner">
+      <span class="stat-item"><strong>6</strong> Continents</span>
+      <span class="stat-sep">·</span>
+      <span class="stat-item"><strong>29</strong> Countries</span>
+      <span class="stat-sep">·</span>
+      <span class="stat-item"><strong>130+</strong> Cities</span>
+      <span class="stat-sep">·</span>
+      <span class="stat-item"><strong>70</strong> Airports</span>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div id="legend">
+    <div class="legend-header" id="legend-toggle">
+      <span>Regions</span>
+      <svg class="legend-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="legend-items" id="legend-items">
+    </div>
+  </div>
+
+  <!-- Footer attribution -->
+  <footer id="footer">
+    <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer">
+      Created with Perplexity Computer
+    </a>
+  </footer>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
