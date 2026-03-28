@@ -24,6 +24,786 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./style.css">
 
+<!-- Admin Panel Styles (scoped to #admin-view) -->
+<style>
+/* ===================== ADMIN VIEW SCOPING ===================== */
+#admin-view { display: none; }
+#admin-view.active { display: block; }
+#globe-view { display: none; }
+#globe-view.active { display: block; }
+
+/* ===================== ADMIN RESET & TOKENS ===================== */
+#admin-view {
+  min-height: 100dvh;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  color: #e0e0e6;
+  background: #06070d;
+  line-height: 1.5;
+}
+
+#admin-view *,
+#admin-view *::before,
+#admin-view *::after { box-sizing: border-box; }
+
+/* ===================== ADMIN CSS VARS ===================== */
+#admin-view {
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Space Grotesk', 'Inter', sans-serif;
+  --color-bg: #06070d;
+  --color-surface: #0d0f18;
+  --color-surface-2: #12141f;
+  --color-surface-3: #181a27;
+  --color-text: #e0e0e6;
+  --color-text-muted: #6b6d7b;
+  --color-text-faint: #3d3f4d;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-hover: rgba(255, 255, 255, 0.15);
+  --color-accent: #4f98a3;
+  --color-accent-hover: #5eadb9;
+  --color-accent-bg: rgba(79, 152, 163, 0.12);
+  --color-danger: #ff4081;
+  --color-danger-bg: rgba(255, 64, 129, 0.12);
+  --color-success: #69f0ae;
+  --color-success-bg: rgba(105, 240, 174, 0.12);
+  --color-warning: #ffd740;
+  --color-warning-bg: rgba(255, 215, 64, 0.12);
+  --color-na: #448aff;
+  --color-eu: #ffd740;
+  --color-asia: #ff4081;
+  --color-oceania: #69f0ae;
+  --color-sa: #ff6e40;
+  --color-ant: #00e5ff;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.5);
+  --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ===================== ADMIN LOGIN ===================== */
+#admin-view #admin-login-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+  z-index: 9999;
+}
+
+#admin-view .login-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  width: 360px;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+}
+
+#admin-view .login-card h1 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #fff;
+}
+
+#admin-view .login-card p {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-bottom: 24px;
+}
+
+#admin-view .login-card .globe-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: var(--color-accent-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-accent);
+}
+
+#admin-view .login-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-size: 14px;
+  font-family: var(--font-body);
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+#admin-view .login-input:focus { border-color: var(--color-accent); }
+#admin-view .login-input.error {
+  border-color: var(--color-danger);
+  animation: adminShake 0.3s ease;
+}
+
+@keyframes adminShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+#admin-view .login-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px;
+  background: var(--color-accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+#admin-view .login-btn:hover { background: var(--color-accent-hover); }
+
+#admin-view .login-error {
+  font-size: 12px;
+  color: var(--color-danger);
+  margin-top: 8px;
+  min-height: 18px;
+}
+
+/* ===================== ADMIN MAIN LAYOUT ===================== */
+#admin-view #admin-app { display: none; }
+#admin-view #admin-app.visible { display: block; }
+
+#admin-view .top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(6, 7, 13, 0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--color-border);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+#admin-view .top-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#admin-view .top-bar-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+#admin-view .top-bar-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--color-accent-bg);
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+#admin-view .top-bar-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* ===================== ADMIN BUTTONS ===================== */
+#admin-view .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-body);
+  cursor: pointer;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+#admin-view .btn:hover {
+  border-color: var(--color-border-hover);
+  background: var(--color-surface-3);
+}
+
+#admin-view .btn-primary {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+}
+
+#admin-view .btn-primary:hover {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+}
+
+#admin-view .btn-danger {
+  background: var(--color-danger-bg);
+  border-color: rgba(255, 64, 129, 0.2);
+  color: var(--color-danger);
+}
+
+#admin-view .btn-danger:hover {
+  background: rgba(255, 64, 129, 0.2);
+  border-color: rgba(255, 64, 129, 0.3);
+}
+
+#admin-view .btn-success {
+  background: var(--color-success-bg);
+  border-color: rgba(105, 240, 174, 0.2);
+  color: var(--color-success);
+}
+
+#admin-view .btn-success:hover {
+  background: rgba(105, 240, 174, 0.2);
+  border-color: rgba(105, 240, 174, 0.3);
+}
+
+#admin-view .btn-sm {
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+#admin-view .btn-icon {
+  padding: 6px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#admin-view .btn-icon:hover { color: var(--color-text); background: var(--color-surface-3); }
+#admin-view .btn-icon.danger:hover { color: var(--color-danger); }
+
+/* ===================== ADMIN STATS ===================== */
+#admin-view .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  padding: 20px 24px;
+}
+
+#admin-view .stat-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+}
+
+#admin-view .stat-card-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+#admin-view .stat-card-value {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===================== ADMIN TABS ===================== */
+#admin-view .tabs {
+  display: flex;
+  gap: 0;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+#admin-view .tab {
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: var(--font-body);
+  border-bottom: 2px solid transparent;
+  transition: all var(--transition);
+  margin-bottom: -1px;
+}
+
+#admin-view .tab:hover { color: var(--color-text); }
+#admin-view .tab.active { color: #fff; border-bottom-color: var(--color-accent); }
+
+/* ===================== ADMIN TOOLBAR ===================== */
+#admin-view .toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  flex-wrap: wrap;
+}
+
+#admin-view .search-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 7px 12px 7px 34px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-size: 13px;
+  font-family: var(--font-body);
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+#admin-view .search-input:focus { border-color: var(--color-accent); }
+
+#admin-view .search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+}
+
+#admin-view .search-wrap svg {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-faint);
+  pointer-events: none;
+}
+
+#admin-view .toolbar-right {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-left: auto;
+}
+
+/* ===================== ADMIN TABLE ===================== */
+#admin-view .table-container {
+  overflow-x: auto;
+  padding: 0 24px 24px;
+}
+
+#admin-view table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+#admin-view thead th {
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+  position: sticky;
+  top: 0;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+#admin-view thead th:hover { color: var(--color-text); }
+#admin-view thead th .sort-arrow { margin-left: 4px; font-size: 10px; opacity: 0.5; }
+#admin-view thead th.sorted .sort-arrow { opacity: 1; color: var(--color-accent); }
+
+#admin-view tbody tr {
+  border-bottom: 1px solid var(--color-border);
+  transition: background var(--transition);
+}
+
+#admin-view tbody tr:hover { background: rgba(255, 255, 255, 0.02); }
+#admin-view tbody tr.selected { background: var(--color-accent-bg); }
+
+#admin-view tbody td {
+  padding: 8px 12px;
+  white-space: nowrap;
+}
+
+#admin-view td .airport-code {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: #fff;
+  font-size: 13px;
+}
+
+#admin-view td .airport-city {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-left: 4px;
+}
+
+#admin-view td .airline-name {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#admin-view td .dist-value {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-display);
+}
+
+#admin-view .checkbox-cell { width: 36px; }
+
+#admin-view input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}
+
+#admin-view .actions-cell { width: 80px; text-align: right; }
+
+/* ===================== ADMIN MODAL ===================== */
+#admin-view .modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 200ms ease;
+}
+
+#admin-view .modal-overlay.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+#admin-view .modal {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  width: 480px;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(10px);
+  transition: transform 200ms ease;
+}
+
+#admin-view .modal-overlay.visible .modal {
+  transform: translateY(0);
+}
+
+#admin-view .modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+#admin-view .modal-header h2 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+#admin-view .modal-body { padding: 20px; }
+
+#admin-view .modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--color-border);
+}
+
+/* ===================== ADMIN FORM ===================== */
+#admin-view .form-group { margin-bottom: 16px; }
+
+#admin-view .form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+
+#admin-view .form-input {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-size: 14px;
+  font-family: var(--font-body);
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+#admin-view .form-input:focus { border-color: var(--color-accent); }
+
+#admin-view .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+#admin-view .form-hint {
+  font-size: 11px;
+  color: var(--color-text-faint);
+  margin-top: 4px;
+}
+
+/* Autocomplete */
+#admin-view .autocomplete-wrap { position: relative; }
+
+#admin-view .autocomplete-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  max-height: 200px;
+  overflow-y: auto;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-top: 2px;
+  display: none;
+  box-shadow: var(--shadow-md);
+}
+
+#admin-view .autocomplete-list.open { display: block; }
+
+#admin-view .autocomplete-item {
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background var(--transition);
+}
+
+#admin-view .autocomplete-item:hover,
+#admin-view .autocomplete-item.highlighted {
+  background: var(--color-accent-bg);
+}
+
+#admin-view .autocomplete-item .ac-code {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: #fff;
+}
+
+#admin-view .autocomplete-item .ac-detail {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  margin-left: 6px;
+}
+
+/* ===================== ADMIN CONFIRM ===================== */
+#admin-view .confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 200ms ease;
+}
+
+#admin-view .confirm-overlay.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+#admin-view .confirm-box {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  width: 380px;
+  max-width: 90vw;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+
+#admin-view .confirm-box h3 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+#admin-view .confirm-box p {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-bottom: 20px;
+}
+
+#admin-view .confirm-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* ===================== ADMIN EMPTY STATE ===================== */
+#admin-view .empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--color-text-muted);
+}
+
+#admin-view .empty-state svg { margin: 0 auto 12px; color: var(--color-text-faint); }
+#admin-view .empty-state h3 { font-size: 15px; color: var(--color-text); margin-bottom: 4px; }
+#admin-view .empty-state p { font-size: 13px; }
+
+/* ===================== ADMIN TOAST ===================== */
+#admin-view .toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#admin-view .toast {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 10px 16px;
+  font-size: 13px;
+  color: var(--color-text);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: adminToastIn 300ms ease;
+  max-width: 340px;
+}
+
+#admin-view .toast.success { border-color: rgba(105, 240, 174, 0.3); }
+#admin-view .toast.error { border-color: rgba(255, 64, 129, 0.3); }
+
+#admin-view .toast-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+#admin-view .toast.success .toast-dot { background: var(--color-success); }
+#admin-view .toast.error .toast-dot { background: var(--color-danger); }
+
+@keyframes adminToastIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===================== ADMIN PAGINATION ===================== */
+#admin-view .pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  border-top: 1px solid var(--color-border);
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+#admin-view .pagination-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#admin-view .pagination-buttons { display: flex; gap: 4px; }
+
+#admin-view .page-btn {
+  padding: 4px 10px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+#admin-view .page-btn:hover:not(:disabled) { color: #fff; border-color: var(--color-border-hover); }
+#admin-view .page-btn:disabled { opacity: 0.3; cursor: default; }
+#admin-view .page-btn.active { background: var(--color-accent-bg); color: var(--color-accent); border-color: rgba(79, 152, 163, 0.3); }
+
+#admin-view .hidden { display: none !important; }
+
+#admin-view .admin-footer {
+  text-align: center;
+  padding: 16px;
+  border-top: 1px solid var(--color-border);
+  margin-top: 20px;
+}
+
+#admin-view .admin-footer a {
+  font-size: 12px;
+  color: var(--color-text-faint);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+#admin-view .admin-footer a:hover { color: var(--color-text-muted); }
+
+/* ===================== ADMIN RESPONSIVE ===================== */
+@media (max-width: 768px) {
+  #admin-view .stats-grid { grid-template-columns: repeat(3, 1fr); padding: 12px 16px; }
+  #admin-view .toolbar { padding: 8px 16px; }
+  #admin-view .table-container { padding: 0 16px 16px; }
+  #admin-view .top-bar { padding: 10px 16px; }
+  #admin-view .form-row { grid-template-columns: 1fr; }
+  #admin-view .top-bar-actions .btn span { display: none; }
+}
+</style>
+
 <script type="importmap">
 {
   "imports": {
@@ -34,6 +814,11 @@
 </script>
 </head>
 <body>
+
+<!-- ============================================================ -->
+<!-- GLOBE VIEW -->
+<!-- ============================================================ -->
+<div id="globe-view">
   <!-- Stats Bar -->
   <header class="stats-bar">
     <div class="stats-inner">
@@ -100,7 +885,1163 @@
       Created with Perplexity Computer
     </a>
   </footer>
+</div>
 
-  <script type="module" src="./app.js"></script>
+<!-- ============================================================ -->
+<!-- ADMIN VIEW -->
+<!-- ============================================================ -->
+<div id="admin-view">
+  <!-- LOGIN SCREEN -->
+  <div id="admin-login-screen">
+    <div class="login-card">
+      <div class="globe-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <h1>Travel Globe Admin</h1>
+      <p>Manage your flights and airports</p>
+      <form id="admin-login-form">
+        <input type="password" class="login-input" id="admin-login-password" placeholder="Enter password" autocomplete="off">
+        <button type="submit" class="login-btn">Sign In</button>
+        <div class="login-error" id="admin-login-error"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="admin-app">
+    <!-- TOP BAR -->
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <span class="top-bar-title">Travel Globe</span>
+        <span class="top-bar-badge">Admin</span>
+      </div>
+      <div class="top-bar-actions">
+        <button class="btn btn-sm" id="btn-back-globe" title="Back to Globe">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span>Back to Globe</span>
+        </button>
+        <button class="btn btn-sm" id="btn-import-csv" title="Import CSV">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span>Import CSV</span>
+        </button>
+        <button class="btn btn-sm btn-success" id="btn-save-export" title="Save & Export">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Save &amp; Export</span>
+        </button>
+        <button class="btn btn-sm btn-danger" id="btn-reset" title="Reset to Original">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          <span>Reset</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid" id="admin-stats-grid"></div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" data-tab="flights">Flights</button>
+      <button class="tab" data-tab="airports">Airports</button>
+    </div>
+
+    <!-- FLIGHTS PANEL -->
+    <div id="panel-flights">
+      <div class="toolbar">
+        <div class="search-wrap">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" class="search-input" id="flight-search" placeholder="Search flights by airport, airline, date...">
+        </div>
+        <div class="toolbar-right">
+          <button class="btn btn-sm btn-danger hidden" id="btn-bulk-delete">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            Delete Selected (<span id="bulk-count">0</span>)
+          </button>
+          <button class="btn btn-sm btn-primary" id="btn-add-flight">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Flight
+          </button>
+        </div>
+      </div>
+      <div class="table-container">
+        <table id="flights-table">
+          <thead>
+            <tr>
+              <th class="checkbox-cell"><input type="checkbox" id="select-all-flights"></th>
+              <th data-sort="date">Date <span class="sort-arrow">▼</span></th>
+              <th data-sort="from">From <span class="sort-arrow">▼</span></th>
+              <th data-sort="to">To <span class="sort-arrow">▼</span></th>
+              <th data-sort="airline">Airline <span class="sort-arrow">▼</span></th>
+              <th data-sort="dist">Distance <span class="sort-arrow">▼</span></th>
+              <th class="actions-cell">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="flights-tbody"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="flights-pagination"></div>
+    </div>
+
+    <!-- AIRPORTS PANEL -->
+    <div id="panel-airports" class="hidden">
+      <div class="toolbar">
+        <div class="search-wrap">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" class="search-input" id="airport-search" placeholder="Search airports by code, city, country...">
+        </div>
+        <div class="toolbar-right">
+          <button class="btn btn-sm btn-primary" id="btn-add-airport">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Airport
+          </button>
+        </div>
+      </div>
+      <div class="table-container">
+        <table id="airports-table">
+          <thead>
+            <tr>
+              <th data-sort="code">Code <span class="sort-arrow">▼</span></th>
+              <th data-sort="city">City <span class="sort-arrow">▼</span></th>
+              <th data-sort="country">Country <span class="sort-arrow">▼</span></th>
+              <th data-sort="lat">Latitude <span class="sort-arrow">▼</span></th>
+              <th data-sort="lng">Longitude <span class="sort-arrow">▼</span></th>
+              <th class="actions-cell">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="airports-tbody"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="airports-pagination"></div>
+    </div>
+
+    <footer class="admin-footer">
+      <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer">
+        Created with Perplexity Computer
+      </a>
+    </footer>
+  </div>
+
+  <!-- FLIGHT MODAL -->
+  <div class="modal-overlay" id="flight-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="flight-modal-title">Add Flight</h2>
+        <button class="btn-icon" id="flight-modal-close">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" class="form-input" id="flight-date">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>From Airport</label>
+            <div class="autocomplete-wrap">
+              <input type="text" class="form-input" id="flight-from" placeholder="Type code or city..." autocomplete="off">
+              <div class="autocomplete-list" id="flight-from-ac"></div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>To Airport</label>
+            <div class="autocomplete-wrap">
+              <input type="text" class="form-input" id="flight-to" placeholder="Type code or city..." autocomplete="off">
+              <div class="autocomplete-list" id="flight-to-ac"></div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Airline</label>
+          <div class="autocomplete-wrap">
+            <input type="text" class="form-input" id="flight-airline" placeholder="Airline name" autocomplete="off">
+            <div class="autocomplete-list" id="flight-airline-ac"></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Distance (miles)</label>
+          <input type="number" class="form-input" id="flight-dist" placeholder="Auto-calculated if airports selected">
+          <div class="form-hint" id="flight-dist-hint"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" id="flight-modal-cancel">Cancel</button>
+        <button class="btn btn-primary" id="flight-modal-save">Save Flight</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AIRPORT MODAL -->
+  <div class="modal-overlay" id="airport-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="airport-modal-title">Add Airport</h2>
+        <button class="btn-icon" id="airport-modal-close">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Airport Code (IATA)</label>
+          <input type="text" class="form-input" id="airport-code" placeholder="e.g. SFO" maxlength="3" style="text-transform: uppercase;">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>City</label>
+            <input type="text" class="form-input" id="airport-city" placeholder="City name">
+          </div>
+          <div class="form-group">
+            <label>Country</label>
+            <input type="text" class="form-input" id="airport-country" placeholder="Country">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Latitude</label>
+            <input type="number" step="0.001" class="form-input" id="airport-lat" placeholder="-90 to 90">
+          </div>
+          <div class="form-group">
+            <label>Longitude</label>
+            <input type="number" step="0.001" class="form-input" id="airport-lng" placeholder="-180 to 180">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" id="airport-modal-cancel">Cancel</button>
+        <button class="btn btn-primary" id="airport-modal-save">Save Airport</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIRM DIALOG -->
+  <div class="confirm-overlay" id="confirm-dialog">
+    <div class="confirm-box">
+      <h3 id="confirm-title">Are you sure?</h3>
+      <p id="confirm-message">This action cannot be undone.</p>
+      <div class="confirm-actions">
+        <button class="btn" id="confirm-cancel">Cancel</button>
+        <button class="btn btn-danger" id="confirm-ok">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div class="toast-container" id="admin-toast-container"></div>
+
+  <!-- HIDDEN FILE INPUT -->
+  <input type="file" id="csv-input" accept=".csv" class="hidden">
+</div>
+
+<!-- Globe App -->
+<script type="module" src="./app.js"></script>
+
+<!-- Admin App (defines window.initAdmin, called by router below) -->
+<script>
+// ========================================
+// ADMIN PANEL CODE
+// ========================================
+
+window.initAdmin = function() {
+  var PASSWORD = 'nitin2026';
+  var data = { airports: {}, flights: [] };
+  var currentTab = 'flights';
+  var flightSort = { key: 'date', dir: 'desc' };
+  var airportSort = { key: 'code', dir: 'asc' };
+  var flightSearch = '';
+  var airportSearch = '';
+  var selectedFlights = new Set();
+  var editingFlightIndex = -1;
+  var editingAirportCode = null;
+  var FLIGHTS_PER_PAGE = 50;
+  var AIRPORTS_PER_PAGE = 50;
+  var flightPage = 1;
+  var airportPage = 1;
+  var isAuthenticated = false;
+  var confirmCallback = null;
+
+  // Scope all queries to #admin-view
+  var root = document.getElementById('admin-view');
+  function $(sel) { return root.querySelector(sel); }
+  function $$(sel) { return root.querySelectorAll(sel); }
+
+  // AUTH
+  function checkAuth() { return isAuthenticated; }
+
+  function initAuth() {
+    if (checkAuth()) { showApp(); return; }
+    $('#admin-login-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var input = $('#admin-login-password');
+      var error = $('#admin-login-error');
+      if (input.value === PASSWORD) {
+        isAuthenticated = true;
+        showApp();
+      } else {
+        input.classList.add('error');
+        error.textContent = 'Incorrect password';
+        setTimeout(function() { input.classList.remove('error'); }, 300);
+      }
+    });
+  }
+
+  function showApp() {
+    $('#admin-login-screen').style.display = 'none';
+    $('#admin-app').classList.add('visible');
+    loadDataAndRender();
+  }
+
+  // DATA
+  async function loadDataAndRender() {
+    await loadFromFile();
+    renderAll();
+  }
+
+  async function loadFromFile() {
+    try {
+      var resp = await fetch('./data.json');
+      data = await resp.json();
+    } catch (e) {
+      console.error('Could not load data.json:', e);
+      data = { airports: {}, flights: [] };
+    }
+  }
+
+  function saveToStorage() { /* Data is in memory; use Export */ }
+
+  // UTILS
+  function haversineDistance(lat1, lng1, lat2, lng2) {
+    var R = 3958.8;
+    var dLat = (lat2 - lat1) * Math.PI / 180;
+    var dLng = (lng2 - lng1) * Math.PI / 180;
+    var a = Math.sin(dLat / 2) ** 2 +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLng / 2) ** 2;
+    return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+  }
+
+  function getUniqueAirlines() {
+    var airlines = new Set();
+    data.flights.forEach(function(f) { airlines.add(f.airline); });
+    return [...airlines].sort();
+  }
+
+  function formatDate(dateStr) {
+    var d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  function showToast(msg, type) {
+    type = type || 'success';
+    var container = $('#admin-toast-container');
+    var toast = document.createElement('div');
+    toast.className = 'toast ' + type;
+    toast.innerHTML = '<span class="toast-dot"></span>' + msg;
+    container.appendChild(toast);
+    setTimeout(function() {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(4px)';
+      toast.style.transition = 'all 300ms ease';
+      setTimeout(function() { toast.remove(); }, 300);
+    }, 3000);
+  }
+
+  // STATS
+  function renderStats() {
+    var flights = data.flights;
+    var airports = data.airports;
+    var airportCodes = new Set();
+    var airlines = new Set();
+    var totalDist = 0;
+    var minDate = '', maxDate = '';
+
+    flights.forEach(function(f) {
+      airportCodes.add(f.from);
+      airportCodes.add(f.to);
+      airlines.add(f.airline);
+      totalDist += f.dist || 0;
+      if (!minDate || f.date < minDate) minDate = f.date;
+      if (!maxDate || f.date > maxDate) maxDate = f.date;
+    });
+
+    var dateRange = minDate && maxDate
+      ? formatDate(minDate) + ' — ' + formatDate(maxDate)
+      : 'No flights';
+
+    var stats = [
+      { label: 'Total Flights', value: flights.length.toLocaleString(), color: 'var(--color-na)' },
+      { label: 'Airports', value: Object.keys(airports).length.toLocaleString(), color: 'var(--color-oceania)' },
+      { label: 'Airlines', value: airlines.size.toLocaleString(), color: 'var(--color-eu)' },
+      { label: 'Miles Flown', value: totalDist.toLocaleString(), color: 'var(--color-asia)' },
+      { label: 'Date Range', value: dateRange, color: 'var(--color-sa)' },
+    ];
+
+    var grid = $('#admin-stats-grid');
+    grid.innerHTML = stats.map(function(s) {
+      return '<div class="stat-card"><div class="stat-card-label">' + s.label + '</div><div class="stat-card-value" style="color: ' + s.color + ';' + (s.label === 'Date Range' ? ' font-size: 14px;' : '') + '">' + s.value + '</div></div>';
+    }).join('');
+  }
+
+  // TABS
+  function initTabs() {
+    $$('.tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        $$('.tab').forEach(function(t) { t.classList.remove('active'); });
+        tab.classList.add('active');
+        currentTab = tab.dataset.tab;
+        $('#panel-flights').classList.toggle('hidden', currentTab !== 'flights');
+        $('#panel-airports').classList.toggle('hidden', currentTab !== 'airports');
+      });
+    });
+  }
+
+  // FLIGHTS TABLE
+  function getFilteredFlights() {
+    var flights = data.flights.slice();
+    if (flightSearch) {
+      var q = flightSearch.toLowerCase();
+      flights = flights.filter(function(f) {
+        return f.date.includes(q) ||
+          f.from.toLowerCase().includes(q) ||
+          f.to.toLowerCase().includes(q) ||
+          f.airline.toLowerCase().includes(q) ||
+          ((data.airports[f.from] && data.airports[f.from].city) || '').toLowerCase().includes(q) ||
+          ((data.airports[f.to] && data.airports[f.to].city) || '').toLowerCase().includes(q) ||
+          String(f.dist).includes(q);
+      });
+    }
+    flights.sort(function(a, b) {
+      var va = a[flightSort.key] || '';
+      var vb = b[flightSort.key] || '';
+      if (flightSort.key === 'dist') {
+        va = Number(va); vb = Number(vb);
+      } else {
+        va = String(va).toLowerCase();
+        vb = String(vb).toLowerCase();
+      }
+      if (va < vb) return flightSort.dir === 'asc' ? -1 : 1;
+      if (va > vb) return flightSort.dir === 'asc' ? 1 : -1;
+      return 0;
+    });
+    return flights;
+  }
+
+  function renderFlightsTable() {
+    var filtered = getFilteredFlights();
+    var total = filtered.length;
+    var totalPages = Math.max(1, Math.ceil(total / FLIGHTS_PER_PAGE));
+    if (flightPage > totalPages) flightPage = totalPages;
+    var start = (flightPage - 1) * FLIGHTS_PER_PAGE;
+    var pageFlights = filtered.slice(start, start + FLIGHTS_PER_PAGE);
+
+    var tbody = $('#flights-tbody');
+
+    if (total === 0) {
+      tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><h3>No flights found</h3><p>' + (flightSearch ? 'Try a different search term' : 'Add your first flight') + '</p></div></td></tr>';
+    } else {
+      tbody.innerHTML = pageFlights.map(function(f) {
+        var origIdx = data.flights.indexOf(f);
+        var fromAp = data.airports[f.from];
+        var toAp = data.airports[f.to];
+        var isSelected = selectedFlights.has(origIdx);
+        return '<tr class="' + (isSelected ? 'selected' : '') + '" data-idx="' + origIdx + '">' +
+          '<td class="checkbox-cell"><input type="checkbox" class="flight-cb" data-idx="' + origIdx + '"' + (isSelected ? ' checked' : '') + '></td>' +
+          '<td>' + formatDate(f.date) + '</td>' +
+          '<td><span class="airport-code">' + f.from + '</span><span class="airport-city">' + (fromAp ? fromAp.city : '') + '</span></td>' +
+          '<td><span class="airport-code">' + f.to + '</span><span class="airport-city">' + (toAp ? toAp.city : '') + '</span></td>' +
+          '<td><span class="airline-name">' + f.airline + '</span></td>' +
+          '<td><span class="dist-value">' + (f.dist || 0).toLocaleString() + ' mi</span></td>' +
+          '<td class="actions-cell">' +
+          '<button class="btn-icon edit-flight" data-idx="' + origIdx + '" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>' +
+          '<button class="btn-icon danger delete-flight" data-idx="' + origIdx + '" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>' +
+          '</td></tr>';
+      }).join('');
+    }
+
+    // Sort headers
+    $$('#flights-table thead th[data-sort]').forEach(function(th) {
+      th.classList.toggle('sorted', th.dataset.sort === flightSort.key);
+      var arrow = th.querySelector('.sort-arrow');
+      arrow.textContent = th.dataset.sort === flightSort.key ? (flightSort.dir === 'asc' ? '▲' : '▼') : '▼';
+    });
+
+    renderPagination('flights-pagination', flightPage, totalPages, total, start, start + pageFlights.length, function(p) {
+      flightPage = p;
+      renderFlightsTable();
+    });
+
+    updateBulkDelete();
+  }
+
+  function updateBulkDelete() {
+    var btn = $('#btn-bulk-delete');
+    var count = selectedFlights.size;
+    $('#bulk-count').textContent = count;
+    btn.classList.toggle('hidden', count === 0);
+    var checkboxes = $$('.flight-cb');
+    var allChecked = checkboxes.length > 0 && [...checkboxes].every(function(cb) { return cb.checked; });
+    $('#select-all-flights').checked = allChecked;
+  }
+
+  // AIRPORTS TABLE
+  function getFilteredAirports() {
+    var entries = Object.entries(data.airports).map(function(pair) {
+      return Object.assign({ code: pair[0] }, pair[1]);
+    });
+    if (airportSearch) {
+      var q = airportSearch.toLowerCase();
+      entries = entries.filter(function(a) {
+        return a.code.toLowerCase().includes(q) ||
+          a.city.toLowerCase().includes(q) ||
+          a.country.toLowerCase().includes(q);
+      });
+    }
+    entries.sort(function(a, b) {
+      var va, vb;
+      if (airportSort.key === 'lat' || airportSort.key === 'lng') {
+        va = Number(a[airportSort.key]); vb = Number(b[airportSort.key]);
+      } else {
+        va = String(a[airportSort.key] || '').toLowerCase();
+        vb = String(b[airportSort.key] || '').toLowerCase();
+      }
+      if (va < vb) return airportSort.dir === 'asc' ? -1 : 1;
+      if (va > vb) return airportSort.dir === 'asc' ? 1 : -1;
+      return 0;
+    });
+    return entries;
+  }
+
+  function renderAirportsTable() {
+    var filtered = getFilteredAirports();
+    var total = filtered.length;
+    var totalPages = Math.max(1, Math.ceil(total / AIRPORTS_PER_PAGE));
+    if (airportPage > totalPages) airportPage = totalPages;
+    var start = (airportPage - 1) * AIRPORTS_PER_PAGE;
+    var pageAirports = filtered.slice(start, start + AIRPORTS_PER_PAGE);
+
+    var tbody = $('#airports-tbody');
+
+    if (total === 0) {
+      tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg><h3>No airports found</h3><p>' + (airportSearch ? 'Try a different search term' : 'Add your first airport') + '</p></div></td></tr>';
+    } else {
+      tbody.innerHTML = pageAirports.map(function(a) {
+        return '<tr><td><span class="airport-code">' + a.code + '</span></td><td>' + a.city + '</td><td>' + a.country + '</td><td style="font-variant-numeric: tabular-nums;">' + a.lat + '</td><td style="font-variant-numeric: tabular-nums;">' + a.lng + '</td><td class="actions-cell"><button class="btn-icon edit-airport" data-code="' + a.code + '" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="btn-icon danger delete-airport" data-code="' + a.code + '" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></td></tr>';
+      }).join('');
+    }
+
+    $$('#airports-table thead th[data-sort]').forEach(function(th) {
+      th.classList.toggle('sorted', th.dataset.sort === airportSort.key);
+      var arrow = th.querySelector('.sort-arrow');
+      arrow.textContent = th.dataset.sort === airportSort.key ? (airportSort.dir === 'asc' ? '▲' : '▼') : '▼';
+    });
+
+    renderPagination('airports-pagination', airportPage, totalPages, total, start, start + pageAirports.length, function(p) {
+      airportPage = p;
+      renderAirportsTable();
+    });
+  }
+
+  // PAGINATION
+  function renderPagination(containerId, currentPage, totalPages, total, start, end, onPageChange) {
+    var container = $('#' + containerId);
+    var buttonsHtml = '';
+    var count = Math.min(totalPages, 7);
+    for (var i = 0; i < count; i++) {
+      var p;
+      if (totalPages <= 7) { p = i + 1; }
+      else if (currentPage <= 4) { p = i + 1; }
+      else if (currentPage >= totalPages - 3) { p = totalPages - 6 + i; }
+      else { p = currentPage - 3 + i; }
+      buttonsHtml += '<button class="page-btn ' + (p === currentPage ? 'active' : '') + '" data-page="' + p + '">' + p + '</button>';
+    }
+
+    container.innerHTML = '<div class="pagination-info"><span>Showing ' + (total > 0 ? start + 1 : 0) + '–' + end + ' of ' + total + '</span></div><div class="pagination-buttons"><button class="page-btn" data-page="prev"' + (currentPage <= 1 ? ' disabled' : '') + '>‹ Prev</button>' + buttonsHtml + '<button class="page-btn" data-page="next"' + (currentPage >= totalPages ? ' disabled' : '') + '>Next ›</button></div>';
+
+    container.querySelectorAll('.page-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var page = btn.dataset.page;
+        if (page === 'prev') onPageChange(currentPage - 1);
+        else if (page === 'next') onPageChange(currentPage + 1);
+        else onPageChange(parseInt(page));
+      });
+    });
+  }
+
+  // FLIGHT MODAL
+  function openFlightModal(index) {
+    if (index === undefined) index = -1;
+    editingFlightIndex = index;
+    var title = $('#flight-modal-title');
+    if (index >= 0) {
+      title.textContent = 'Edit Flight';
+      var f = data.flights[index];
+      $('#flight-date').value = f.date;
+      $('#flight-from').value = f.from;
+      $('#flight-to').value = f.to;
+      $('#flight-airline').value = f.airline;
+      $('#flight-dist').value = f.dist || '';
+    } else {
+      title.textContent = 'Add Flight';
+      $('#flight-date').value = '';
+      $('#flight-from').value = '';
+      $('#flight-to').value = '';
+      $('#flight-airline').value = '';
+      $('#flight-dist').value = '';
+      $('#flight-dist-hint').textContent = '';
+    }
+    $('#flight-modal').classList.add('visible');
+  }
+
+  function closeFlightModal() {
+    $('#flight-modal').classList.remove('visible');
+    $$('.autocomplete-list').forEach(function(l) { l.classList.remove('open'); });
+  }
+
+  function saveFlightFromModal() {
+    var date = $('#flight-date').value;
+    var from = $('#flight-from').value.toUpperCase().trim();
+    var to = $('#flight-to').value.toUpperCase().trim();
+    var airline = $('#flight-airline').value.trim();
+    var dist = parseInt($('#flight-dist').value) || 0;
+    if (!date || !from || !to || !airline) {
+      showToast('Please fill all required fields', 'error');
+      return;
+    }
+    var flight = { date: date, from: from, to: to, airline: airline, dist: dist };
+    if (editingFlightIndex >= 0) {
+      data.flights[editingFlightIndex] = flight;
+      showToast('Flight updated');
+    } else {
+      data.flights.push(flight);
+      showToast('Flight added');
+    }
+    saveToStorage();
+    closeFlightModal();
+    renderAll();
+  }
+
+  // AIRPORT MODAL
+  function openAirportModal(code) {
+    editingAirportCode = code || null;
+    var title = $('#airport-modal-title');
+    var codeInput = $('#airport-code');
+    if (code) {
+      title.textContent = 'Edit Airport';
+      var ap = data.airports[code];
+      codeInput.value = code;
+      codeInput.disabled = true;
+      $('#airport-city').value = ap.city;
+      $('#airport-country').value = ap.country;
+      $('#airport-lat').value = ap.lat;
+      $('#airport-lng').value = ap.lng;
+    } else {
+      title.textContent = 'Add Airport';
+      codeInput.value = '';
+      codeInput.disabled = false;
+      $('#airport-city').value = '';
+      $('#airport-country').value = '';
+      $('#airport-lat').value = '';
+      $('#airport-lng').value = '';
+    }
+    $('#airport-modal').classList.add('visible');
+  }
+
+  function closeAirportModal() {
+    $('#airport-modal').classList.remove('visible');
+  }
+
+  function saveAirportFromModal() {
+    var code = $('#airport-code').value.toUpperCase().trim();
+    var city = $('#airport-city').value.trim();
+    var country = $('#airport-country').value.trim();
+    var lat = parseFloat($('#airport-lat').value);
+    var lng = parseFloat($('#airport-lng').value);
+    if (!code || !city || !country || isNaN(lat) || isNaN(lng)) {
+      showToast('Please fill all fields correctly', 'error');
+      return;
+    }
+    if (code.length !== 3) {
+      showToast('Airport code must be 3 characters', 'error');
+      return;
+    }
+    if (!editingAirportCode && data.airports[code]) {
+      showToast('Airport ' + code + ' already exists', 'error');
+      return;
+    }
+    data.airports[code] = { lat: lat, lng: lng, city: city, country: country };
+    saveToStorage();
+    closeAirportModal();
+    showToast(editingAirportCode ? 'Airport updated' : 'Airport added');
+    renderAll();
+  }
+
+  // CONFIRM
+  function showConfirm(title, message, okLabel, onConfirm) {
+    $('#confirm-title').textContent = title;
+    $('#confirm-message').textContent = message;
+    $('#confirm-ok').textContent = okLabel;
+    confirmCallback = onConfirm;
+    $('#confirm-dialog').classList.add('visible');
+  }
+
+  function closeConfirm() {
+    $('#confirm-dialog').classList.remove('visible');
+    confirmCallback = null;
+  }
+
+  // AUTOCOMPLETE
+  function setupAirportAutocomplete(inputId, listId) {
+    var input = $('#' + inputId);
+    var list = $('#' + listId);
+    var highlightIndex = -1;
+
+    input.addEventListener('input', function() {
+      var val = input.value.toLowerCase();
+      if (val.length === 0) { list.classList.remove('open'); return; }
+      var entries = Object.entries(data.airports)
+        .filter(function(pair) {
+          return pair[0].toLowerCase().includes(val) ||
+            pair[1].city.toLowerCase().includes(val) ||
+            pair[1].country.toLowerCase().includes(val);
+        })
+        .slice(0, 10);
+      if (entries.length === 0) { list.classList.remove('open'); return; }
+      list.innerHTML = entries.map(function(pair) {
+        return '<div class="autocomplete-item" data-value="' + pair[0] + '"><span class="ac-code">' + pair[0] + '</span><span class="ac-detail">' + pair[1].city + ', ' + pair[1].country + '</span></div>';
+      }).join('');
+      list.classList.add('open');
+      highlightIndex = -1;
+      list.querySelectorAll('.autocomplete-item').forEach(function(item) {
+        item.addEventListener('mousedown', function(e) {
+          e.preventDefault();
+          input.value = item.dataset.value;
+          list.classList.remove('open');
+          input.dispatchEvent(new Event('change'));
+          autoCalcDistance();
+        });
+      });
+    });
+
+    input.addEventListener('blur', function() {
+      setTimeout(function() { list.classList.remove('open'); }, 150);
+    });
+
+    input.addEventListener('keydown', function(e) {
+      var items = list.querySelectorAll('.autocomplete-item');
+      if (!list.classList.contains('open') || items.length === 0) return;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        highlightIndex = Math.min(highlightIndex + 1, items.length - 1);
+        items.forEach(function(it, i) { it.classList.toggle('highlighted', i === highlightIndex); });
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        highlightIndex = Math.max(highlightIndex - 1, 0);
+        items.forEach(function(it, i) { it.classList.toggle('highlighted', i === highlightIndex); });
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (highlightIndex >= 0 && items[highlightIndex]) {
+          input.value = items[highlightIndex].dataset.value;
+          list.classList.remove('open');
+          autoCalcDistance();
+        }
+      } else if (e.key === 'Escape') {
+        list.classList.remove('open');
+      }
+    });
+  }
+
+  function setupAirlineAutocomplete() {
+    var input = $('#flight-airline');
+    var list = $('#flight-airline-ac');
+    var highlightIndex = -1;
+
+    input.addEventListener('input', function() {
+      var val = input.value.toLowerCase();
+      if (val.length === 0) { list.classList.remove('open'); return; }
+      var airlines = getUniqueAirlines()
+        .filter(function(a) { return a.toLowerCase().includes(val); })
+        .slice(0, 8);
+      if (airlines.length === 0) { list.classList.remove('open'); return; }
+      list.innerHTML = airlines.map(function(a) {
+        return '<div class="autocomplete-item" data-value="' + a + '">' + a + '</div>';
+      }).join('');
+      list.classList.add('open');
+      highlightIndex = -1;
+      list.querySelectorAll('.autocomplete-item').forEach(function(item) {
+        item.addEventListener('mousedown', function(e) {
+          e.preventDefault();
+          input.value = item.dataset.value;
+          list.classList.remove('open');
+        });
+      });
+    });
+
+    input.addEventListener('blur', function() {
+      setTimeout(function() { list.classList.remove('open'); }, 150);
+    });
+
+    input.addEventListener('keydown', function(e) {
+      var items = list.querySelectorAll('.autocomplete-item');
+      if (!list.classList.contains('open') || items.length === 0) return;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        highlightIndex = Math.min(highlightIndex + 1, items.length - 1);
+        items.forEach(function(it, i) { it.classList.toggle('highlighted', i === highlightIndex); });
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        highlightIndex = Math.max(highlightIndex - 1, 0);
+        items.forEach(function(it, i) { it.classList.toggle('highlighted', i === highlightIndex); });
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (highlightIndex >= 0 && items[highlightIndex]) {
+          input.value = items[highlightIndex].dataset.value;
+          list.classList.remove('open');
+        }
+      } else if (e.key === 'Escape') {
+        list.classList.remove('open');
+      }
+    });
+  }
+
+  function autoCalcDistance() {
+    var from = $('#flight-from').value.toUpperCase().trim();
+    var to = $('#flight-to').value.toUpperCase().trim();
+    var distInput = $('#flight-dist');
+    var hint = $('#flight-dist-hint');
+    if (data.airports[from] && data.airports[to]) {
+      var d = haversineDistance(
+        data.airports[from].lat, data.airports[from].lng,
+        data.airports[to].lat, data.airports[to].lng
+      );
+      if (!distInput.value || distInput.value === '0') {
+        distInput.value = d;
+      }
+      hint.textContent = 'Calculated: ' + d.toLocaleString() + ' mi (' + data.airports[from].city + ' → ' + data.airports[to].city + ')';
+    } else {
+      hint.textContent = '';
+    }
+  }
+
+  // CSV IMPORT
+  function importCSV(csvText) {
+    var lines = csvText.split('\n').filter(function(l) { return l.trim(); });
+    if (lines.length < 2) { showToast('CSV has no data rows', 'error'); return; }
+    var header = lines[0].split(',').map(function(h) { return h.trim().toLowerCase(); });
+    var dateIdx = header.indexOf('date');
+    var fromIdx = header.indexOf('from');
+    var toIdx = header.indexOf('to');
+    var airlineIdx = header.indexOf('airline');
+    var distIdx = header.indexOf('distance');
+    if (dateIdx === -1 || fromIdx === -1 || toIdx === -1) {
+      showToast('CSV must have Date, From, To columns', 'error');
+      return;
+    }
+    var added = 0;
+    for (var i = 1; i < lines.length; i++) {
+      var cols = parseCSVLine(lines[i]);
+      if (cols.length <= Math.max(dateIdx, fromIdx, toIdx)) continue;
+      var date = (cols[dateIdx] || '').trim();
+      var from = (cols[fromIdx] || '').trim().toUpperCase();
+      var to = (cols[toIdx] || '').trim().toUpperCase();
+      var airline = airlineIdx >= 0 ? ((cols[airlineIdx] || '').trim() || 'Unknown') : 'Unknown';
+      var dist = distIdx >= 0 ? parseInt(cols[distIdx]) : 0;
+      if (!date || !from || !to) continue;
+      if (!dist && data.airports[from] && data.airports[to]) {
+        dist = haversineDistance(
+          data.airports[from].lat, data.airports[from].lng,
+          data.airports[to].lat, data.airports[to].lng
+        );
+      }
+      data.flights.push({ date: date, from: from, to: to, airline: airline, dist: dist || 0 });
+      added++;
+    }
+    saveToStorage();
+    showToast('Imported ' + added + ' flights');
+    renderAll();
+  }
+
+  function parseCSVLine(line) {
+    var result = [];
+    var current = '';
+    var inQuotes = false;
+    for (var i = 0; i < line.length; i++) {
+      var ch = line[i];
+      if (ch === '"') { inQuotes = !inQuotes; }
+      else if (ch === ',' && !inQuotes) { result.push(current); current = ''; }
+      else { current += ch; }
+    }
+    result.push(current);
+    return result;
+  }
+
+  // RENDER ALL
+  function renderAll() {
+    renderStats();
+    renderFlightsTable();
+    renderAirportsTable();
+  }
+
+  // EVENTS
+  function initEvents() {
+    initTabs();
+
+    $('#flight-search').addEventListener('input', function(e) {
+      flightSearch = e.target.value;
+      flightPage = 1;
+      renderFlightsTable();
+    });
+
+    $('#airport-search').addEventListener('input', function(e) {
+      airportSearch = e.target.value;
+      airportPage = 1;
+      renderAirportsTable();
+    });
+
+    // Flight sort
+    $$('#flights-table thead th[data-sort]').forEach(function(th) {
+      th.addEventListener('click', function() {
+        var key = th.dataset.sort;
+        if (flightSort.key === key) {
+          flightSort.dir = flightSort.dir === 'asc' ? 'desc' : 'asc';
+        } else {
+          flightSort.key = key;
+          flightSort.dir = key === 'date' ? 'desc' : 'asc';
+        }
+        flightPage = 1;
+        renderFlightsTable();
+      });
+    });
+
+    // Airport sort
+    $$('#airports-table thead th[data-sort]').forEach(function(th) {
+      th.addEventListener('click', function() {
+        var key = th.dataset.sort;
+        if (airportSort.key === key) {
+          airportSort.dir = airportSort.dir === 'asc' ? 'desc' : 'asc';
+        } else {
+          airportSort.key = key;
+          airportSort.dir = 'asc';
+        }
+        airportPage = 1;
+        renderAirportsTable();
+      });
+    });
+
+    // Select all
+    $('#select-all-flights').addEventListener('change', function(e) {
+      $$('.flight-cb').forEach(function(cb) {
+        var idx = parseInt(cb.dataset.idx);
+        if (e.target.checked) selectedFlights.add(idx);
+        else selectedFlights.delete(idx);
+        cb.checked = e.target.checked;
+      });
+      updateBulkDelete();
+      $$('#flights-tbody tr').forEach(function(tr) {
+        var idx = parseInt(tr.dataset.idx);
+        tr.classList.toggle('selected', selectedFlights.has(idx));
+      });
+    });
+
+    // Individual checkboxes
+    $('#flights-tbody').addEventListener('change', function(e) {
+      if (e.target.classList.contains('flight-cb')) {
+        var idx = parseInt(e.target.dataset.idx);
+        if (e.target.checked) selectedFlights.add(idx);
+        else selectedFlights.delete(idx);
+        e.target.closest('tr').classList.toggle('selected', e.target.checked);
+        updateBulkDelete();
+      }
+    });
+
+    // Edit/delete flight
+    $('#flights-tbody').addEventListener('click', function(e) {
+      var editBtn = e.target.closest('.edit-flight');
+      var deleteBtn = e.target.closest('.delete-flight');
+      if (editBtn) {
+        openFlightModal(parseInt(editBtn.dataset.idx));
+      } else if (deleteBtn) {
+        var idx = parseInt(deleteBtn.dataset.idx);
+        var f = data.flights[idx];
+        showConfirm('Delete Flight',
+          'Delete flight ' + f.from + ' → ' + f.to + ' on ' + formatDate(f.date) + '?',
+          'Delete',
+          function() {
+            data.flights.splice(idx, 1);
+            selectedFlights.clear();
+            saveToStorage();
+            showToast('Flight deleted');
+            renderAll();
+          }
+        );
+      }
+    });
+
+    // Edit/delete airport
+    $('#airports-tbody').addEventListener('click', function(e) {
+      var editBtn = e.target.closest('.edit-airport');
+      var deleteBtn = e.target.closest('.delete-airport');
+      if (editBtn) {
+        openAirportModal(editBtn.dataset.code);
+      } else if (deleteBtn) {
+        var code = deleteBtn.dataset.code;
+        showConfirm('Delete Airport',
+          'Delete airport ' + code + ' (' + (data.airports[code] ? data.airports[code].city : '') + ')?',
+          'Delete',
+          function() {
+            delete data.airports[code];
+            saveToStorage();
+            showToast('Airport deleted');
+            renderAll();
+          }
+        );
+      }
+    });
+
+    // Add buttons
+    $('#btn-add-flight').addEventListener('click', function() { openFlightModal(); });
+    $('#btn-add-airport').addEventListener('click', function() { openAirportModal(); });
+
+    // Flight modal
+    $('#flight-modal-close').addEventListener('click', closeFlightModal);
+    $('#flight-modal-cancel').addEventListener('click', closeFlightModal);
+    $('#flight-modal-save').addEventListener('click', saveFlightFromModal);
+    $('#flight-modal').addEventListener('click', function(e) {
+      if (e.target.id === 'flight-modal') closeFlightModal();
+    });
+
+    // Airport modal
+    $('#airport-modal-close').addEventListener('click', closeAirportModal);
+    $('#airport-modal-cancel').addEventListener('click', closeAirportModal);
+    $('#airport-modal-save').addEventListener('click', saveAirportFromModal);
+    $('#airport-modal').addEventListener('click', function(e) {
+      if (e.target.id === 'airport-modal') closeAirportModal();
+    });
+
+    // Confirm dialog
+    $('#confirm-cancel').addEventListener('click', closeConfirm);
+    $('#confirm-ok').addEventListener('click', function() {
+      if (confirmCallback) confirmCallback();
+      closeConfirm();
+    });
+    $('#confirm-dialog').addEventListener('click', function(e) {
+      if (e.target.id === 'confirm-dialog') closeConfirm();
+    });
+
+    // Bulk delete
+    $('#btn-bulk-delete').addEventListener('click', function() {
+      var count = selectedFlights.size;
+      showConfirm('Delete Flights',
+        'Delete ' + count + ' selected flight' + (count > 1 ? 's' : '') + '?',
+        'Delete All',
+        function() {
+          var indices = [...selectedFlights].sort(function(a, b) { return b - a; });
+          indices.forEach(function(idx) { data.flights.splice(idx, 1); });
+          selectedFlights.clear();
+          saveToStorage();
+          showToast(count + ' flights deleted');
+          renderAll();
+        }
+      );
+    });
+
+    // Save & Export
+    $('#btn-save-export').addEventListener('click', function() {
+      saveToStorage();
+      var json = JSON.stringify(data, null, 2);
+      var blob = new Blob([json], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'data.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Data exported as data.json');
+    });
+
+    // Back to Globe
+    $('#btn-back-globe').addEventListener('click', function() {
+      window.location.hash = '';
+    });
+
+    // Reset
+    $('#btn-reset').addEventListener('click', function() {
+      showConfirm('Reset to Original',
+        'This will discard all changes and reload the original data.',
+        'Reset',
+        async function() {
+          await loadFromFile();
+          selectedFlights.clear();
+          showToast('Data reset to original');
+          renderAll();
+        }
+      );
+    });
+
+    // Import CSV
+    $('#btn-import-csv').addEventListener('click', function() {
+      $('#csv-input').click();
+    });
+
+    $('#csv-input').addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        importCSV(ev.target.result);
+        e.target.value = '';
+      };
+      reader.readAsText(file);
+    });
+
+    // Auto-calc distance
+    $('#flight-from').addEventListener('change', autoCalcDistance);
+    $('#flight-to').addEventListener('change', autoCalcDistance);
+
+    // Autocomplete
+    setupAirportAutocomplete('flight-from', 'flight-from-ac');
+    setupAirportAutocomplete('flight-to', 'flight-to-ac');
+    setupAirlineAutocomplete();
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeFlightModal();
+        closeAirportModal();
+        closeConfirm();
+      }
+    });
+  }
+
+  // INIT
+  initAuth();
+  initEvents();
+};
+</script>
+
+<!-- Router Script (runs after all scripts are defined) -->
+<script>
+(function() {
+  function route() {
+    var hash = window.location.hash;
+    var globeView = document.getElementById('globe-view');
+    var adminView = document.getElementById('admin-view');
+
+    if (hash === '#admin') {
+      globeView.classList.remove('active');
+      adminView.classList.add('active');
+      document.title = "Travel Globe \u2014 Admin";
+      if (window.__adminInitialized) return;
+      window.__adminInitialized = true;
+      if (typeof window.initAdmin === 'function') window.initAdmin();
+    } else {
+      adminView.classList.remove('active');
+      globeView.classList.add('active');
+      document.title = "Nitin's Travels";
+    }
+  }
+
+  window.addEventListener('hashchange', route);
+  route();
+})();
+</script>
+
 </body>
 </html>
