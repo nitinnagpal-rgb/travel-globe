@@ -14,6 +14,7 @@ async function loadData() {
   const DATA = await loadData();
   const AIRPORTS = DATA.airports;
   const FLIGHTS = DATA.flights;
+  const TRIPS = DATA.trips || [];
 
 // Region classification
 function getRegion(code) {
@@ -39,6 +40,16 @@ const REGIONS = {
   'south-america': { label: 'South America', color: '#ff6e40' },
   'antarctica':    { label: 'Antarctica', color: '#00e5ff' },
 };
+
+// Region classification for trips (by country name)
+function getRegionByCountry(country) {
+  if (['USA', 'Canada', 'Mexico'].includes(country)) return 'north-america';
+  if (['Argentina', 'Peru', 'Panama', 'Brazil', 'Chile', 'Colombia', 'Ecuador', 'Bolivia', 'Uruguay', 'Paraguay', 'Venezuela'].includes(country)) return 'south-america';
+  if (['India', 'Thailand', 'Singapore', 'Japan', 'China', 'South Korea', 'Vietnam', 'Malaysia', 'Indonesia', 'Philippines', 'Sri Lanka', 'Nepal', 'Bangladesh', 'Myanmar', 'Cambodia', 'Laos', 'Taiwan', 'Hong Kong', 'UAE', 'Israel', 'Turkey', 'Saudi Arabia', 'Qatar', 'Jordan', 'Lebanon', 'Oman', 'Bahrain', 'Kuwait'].includes(country)) return 'asia';
+  if (['Australia', 'New Zealand', 'Fiji', 'Papua New Guinea'].includes(country)) return 'oceania';
+  if (['UK', 'Germany', 'France', 'Netherlands', 'Sweden', 'Denmark', 'Norway', 'Finland', 'Belgium', 'Spain', 'Austria', 'Slovakia', 'Switzerland', 'Italy', 'Portugal', 'Ireland', 'Greece', 'Poland', 'Czech Republic', 'Hungary', 'Romania', 'Croatia', 'Iceland', 'Estonia', 'Latvia', 'Lithuania', 'Slovenia', 'Serbia', 'Bulgaria', 'Montenegro', 'Albania', 'North Macedonia', 'Bosnia and Herzegovina', 'Luxembourg', 'Malta', 'Cyprus', 'Scotland', 'Wales'].includes(country)) return 'europe';
+  return 'other';
+}
 
 
 // Compute route data
@@ -234,6 +245,59 @@ scene.add(dotMesh);
 scene.add(glowMesh);
 
 // ===========================
+// TRIP DOTS (non-flight travel locations)
+// ===========================
+
+// Deduplicate trips by lat/lng to avoid overlapping dots
+const tripLocations = [];
+const tripLocSet = new Set();
+TRIPS.forEach(t => {
+  const key = `${t.lat.toFixed(2)},${t.lng.toFixed(2)}`;
+  if (!tripLocSet.has(key)) {
+    tripLocSet.add(key);
+    tripLocations.push(t);
+  }
+});
+
+let tripDotMesh = null;
+let tripGlowMesh = null;
+const tripDotPositions = [];
+
+if (tripLocations.length > 0) {
+  const tripDotGeom = new THREE.SphereGeometry(0.007, 8, 8);
+  const tripDotMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  tripDotMesh = new THREE.InstancedMesh(tripDotGeom, tripDotMat, tripLocations.length);
+
+  const tripGlowGeom = new THREE.SphereGeometry(0.014, 8, 8);
+  const tripGlowMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.25, blending: THREE.AdditiveBlending });
+  tripGlowMesh = new THREE.InstancedMesh(tripGlowGeom, tripGlowMat, tripLocations.length);
+
+  tripLocations.forEach((t, i) => {
+    const region = getRegionByCountry(t.country);
+    const color = new THREE.Color(REGIONS[region]?.color || '#b0b0b0');
+    const pos = latLngToVector3(t.lat, t.lng, GLOBE_RADIUS + 0.003);
+
+    dummy.position.copy(pos);
+    dummy.scale.setScalar(1.0);
+    dummy.updateMatrix();
+
+    tripDotMesh.setMatrixAt(i, dummy.matrix);
+    tripDotMesh.setColorAt(i, color);
+    tripGlowMesh.setMatrixAt(i, dummy.matrix);
+    tripGlowMesh.setColorAt(i, color);
+
+    tripDotPositions.push({ city: t.city, country: t.country, position: pos.clone(), index: i, region, isTrip: true });
+  });
+
+  tripDotMesh.instanceMatrix.needsUpdate = true;
+  tripDotMesh.instanceColor.needsUpdate = true;
+  tripGlowMesh.instanceMatrix.needsUpdate = true;
+  tripGlowMesh.instanceColor.needsUpdate = true;
+  scene.add(tripDotMesh);
+  scene.add(tripGlowMesh);
+}
+
+// ===========================
 // FLIGHT ARCS
 // ===========================
 
@@ -370,16 +434,33 @@ function onMouseMove(event) {
   let closest = null;
   let closestDist = 30; // pixels
 
+  // Check airport dots
   dotPositions.forEach(dp => {
     const screenPos = dp.position.clone().project(camera);
     const sx = (screenPos.x * 0.5 + 0.5) * window.innerWidth;
     const sy = (-screenPos.y * 0.5 + 0.5) * window.innerHeight;
     const dist = Math.hypot(event.clientX - sx, event.clientY - sy);
 
-    // Check if dot is on front of globe (not behind)
     const dotDir = dp.position.clone().normalize();
     const camDir = camera.position.clone().normalize();
-    if (dotDir.dot(camDir) < -0.1) return; // behind globe
+    if (dotDir.dot(camDir) < -0.1) return;
+
+    if (dist < closestDist) {
+      closestDist = dist;
+      closest = dp;
+    }
+  });
+
+  // Check trip dots
+  tripDotPositions.forEach(dp => {
+    const screenPos = dp.position.clone().project(camera);
+    const sx = (screenPos.x * 0.5 + 0.5) * window.innerWidth;
+    const sy = (-screenPos.y * 0.5 + 0.5) * window.innerHeight;
+    const dist = Math.hypot(event.clientX - sx, event.clientY - sy);
+
+    const dotDir = dp.position.clone().normalize();
+    const camDir = camera.position.clone().normalize();
+    if (dotDir.dot(camDir) < -0.1) return;
 
     if (dist < closestDist) {
       closestDist = dist;
@@ -388,18 +469,31 @@ function onMouseMove(event) {
   });
 
   if (closest) {
-    const ap = AIRPORTS[closest.code];
     const region = closest.region;
     const color = REGIONS[region]?.color || '#fff';
-    const flightCount = airportCounts[closest.code] || 0;
 
-    tooltip.innerHTML = `
-      <span class="tooltip-dot" style="background:${color}"></span>
-      <span class="tooltip-info">
-        <span class="tooltip-city">${ap.city} (${closest.code})</span>
-        <span class="tooltip-detail">${ap.country} · ${flightCount} flights</span>
-      </span>
-    `;
+    let tooltipContent;
+    if (closest.isTrip) {
+      tooltipContent = `
+        <span class="tooltip-dot" style="background:${color}"></span>
+        <span class="tooltip-info">
+          <span class="tooltip-city">${closest.city}</span>
+          <span class="tooltip-detail">${closest.country} · trip</span>
+        </span>
+      `;
+    } else {
+      const ap = AIRPORTS[closest.code];
+      const flightCount = airportCounts[closest.code] || 0;
+      tooltipContent = `
+        <span class="tooltip-dot" style="background:${color}"></span>
+        <span class="tooltip-info">
+          <span class="tooltip-city">${ap.city} (${closest.code})</span>
+          <span class="tooltip-detail">${ap.country} · ${flightCount} flights</span>
+        </span>
+      `;
+    }
+
+    tooltip.innerHTML = tooltipContent;
     tooltip.classList.add('visible');
     tooltip.style.left = (event.clientX + 16) + 'px';
     tooltip.style.top = (event.clientY - 16) + 'px';
@@ -558,14 +652,28 @@ function updateStats(flights) {
     });
   });
 
-  document.querySelectorAll('.stat-number').forEach(el => {
+  // Count trips matching current year filter
+  const filteredTrips = TRIPS.filter(t => {
+    if (activeYear !== 'all' && t.date && !t.date.startsWith(activeYear)) return false;
+    return true;
+  });
+
+  // Add trip regions to continents
+  filteredTrips.forEach(t => {
+    const r = getRegionByCountry(t.country);
+    if (r !== 'other') continents.add(r);
+  });
+
+  document.querySelectorAll('#globe-view .stat-number').forEach(el => {
     const format = el.dataset.format;
+    const label = el.closest('.stat')?.querySelector('.stat-label')?.textContent;
     let target;
     if (format === 'miles') target = totalDist;
-    else if (el.closest('.stat')?.querySelector('.stat-label')?.textContent === 'Flights') target = flights.length;
-    else if (el.closest('.stat')?.querySelector('.stat-label')?.textContent === 'Airports') target = airports.size;
-    else if (el.closest('.stat')?.querySelector('.stat-label')?.textContent === 'Airlines') target = airlines.size;
-    else if (el.closest('.stat')?.querySelector('.stat-label')?.textContent === 'Continents') target = continents.size;
+    else if (label === 'Flights') target = flights.length;
+    else if (label === 'Airports') target = airports.size;
+    else if (label === 'Airlines') target = airlines.size;
+    else if (label === 'Continents') target = continents.size;
+    else if (label === 'Trips') target = filteredTrips.length;
     else return;
 
     animateNumber(el, target, format === 'miles');
