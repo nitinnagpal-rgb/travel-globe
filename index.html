@@ -591,6 +591,76 @@
   margin-top: 4px;
 }
 
+/* Geo status indicator */
+#admin-view .geo-status {
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+  display: none;
+  align-items: center;
+  gap: 8px;
+}
+#admin-view .geo-status.visible { display: flex; }
+#admin-view .geo-status.searching {
+  background: rgba(94, 192, 200, 0.08);
+  color: var(--color-accent);
+  border: 1px solid rgba(94, 192, 200, 0.2);
+}
+#admin-view .geo-status.success {
+  background: rgba(105, 240, 174, 0.08);
+  color: var(--color-oceania);
+  border: 1px solid rgba(105, 240, 174, 0.2);
+}
+#admin-view .geo-status.error {
+  background: rgba(255, 110, 64, 0.08);
+  color: var(--color-sa);
+  border: 1px solid rgba(255, 110, 64, 0.2);
+}
+#admin-view .geo-spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(94, 192, 200, 0.2);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Advanced details/summary */
+#admin-view .advanced-section {
+  margin-bottom: 12px;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0;
+}
+#admin-view .advanced-section[open] {
+  padding-bottom: 4px;
+}
+#admin-view .advanced-section summary {
+  cursor: pointer;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--color-text-dim);
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#admin-view .advanced-section summary::-webkit-details-marker { display: none; }
+#admin-view .advanced-section summary::before {
+  content: '▸';
+  font-size: 10px;
+  transition: transform 0.15s;
+}
+#admin-view .advanced-section[open] summary::before { transform: rotate(90deg); }
+#admin-view .advanced-section summary:hover { color: var(--color-text); }
+#admin-view .advanced-section .form-row {
+  padding: 4px 12px 8px;
+}
+
 /* Autocomplete */
 #admin-view .autocomplete-wrap { position: relative; }
 
@@ -1153,23 +1223,28 @@
         <div class="form-row">
           <div class="form-group">
             <label>City</label>
-            <input type="text" class="form-input" id="airport-city" placeholder="City name">
+            <input type="text" class="form-input" id="airport-city" placeholder="e.g. San Francisco">
           </div>
           <div class="form-group">
             <label>Country</label>
-            <input type="text" class="form-input" id="airport-country" placeholder="Country">
+            <input type="text" class="form-input" id="airport-country" placeholder="e.g. United States">
           </div>
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Latitude</label>
-            <input type="number" step="0.001" class="form-input" id="airport-lat" placeholder="-90 to 90">
+        <div class="form-hint" style="margin: -8px 0 8px;">Coordinates are looked up automatically from the city + country.</div>
+        <div class="geo-status" id="airport-geo-status"></div>
+        <details class="advanced-section" id="airport-advanced">
+          <summary>Advanced: set coordinates manually</summary>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Latitude</label>
+              <input type="number" step="0.001" class="form-input" id="airport-lat" placeholder="-90 to 90">
+            </div>
+            <div class="form-group">
+              <label>Longitude</label>
+              <input type="number" step="0.001" class="form-input" id="airport-lng" placeholder="-180 to 180">
+            </div>
           </div>
-          <div class="form-group">
-            <label>Longitude</label>
-            <input type="number" step="0.001" class="form-input" id="airport-lng" placeholder="-180 to 180">
-          </div>
-        </div>
+        </details>
       </div>
       <div class="modal-footer">
         <button class="btn" id="airport-modal-cancel">Cancel</button>
@@ -1195,24 +1270,28 @@
         <div class="form-row">
           <div class="form-group">
             <label>City</label>
-            <input type="text" class="form-input" id="trip-city" placeholder="City name">
+            <input type="text" class="form-input" id="trip-city" placeholder="e.g. Jaipur">
           </div>
           <div class="form-group">
             <label>Country</label>
-            <input type="text" class="form-input" id="trip-country" placeholder="Country">
+            <input type="text" class="form-input" id="trip-country" placeholder="e.g. India">
           </div>
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Latitude</label>
-            <input type="number" step="0.001" class="form-input" id="trip-lat" placeholder="-90 to 90">
-            <div class="form-hint">Auto-filled when you enter a known city</div>
+        <div class="form-hint" style="margin: -8px 0 8px;">Coordinates are looked up automatically from the city + country.</div>
+        <div class="geo-status" id="trip-geo-status"></div>
+        <details class="advanced-section" id="trip-advanced">
+          <summary>Advanced: set coordinates manually</summary>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Latitude</label>
+              <input type="number" step="0.001" class="form-input" id="trip-lat" placeholder="-90 to 90">
+            </div>
+            <div class="form-group">
+              <label>Longitude</label>
+              <input type="number" step="0.001" class="form-input" id="trip-lng" placeholder="-180 to 180">
+            </div>
           </div>
-          <div class="form-group">
-            <label>Longitude</label>
-            <input type="number" step="0.001" class="form-input" id="trip-lng" placeholder="-180 to 180">
-          </div>
-        </div>
+        </details>
         <div class="form-group">
           <label>Mode of Transport</label>
           <select class="form-input" id="trip-mode">
@@ -1745,6 +1824,10 @@ window.initAdmin = function() {
       $('#trip-mode').value = '';
       $('#trip-notes').value = '';
     }
+    // Reset geo status and collapse advanced section
+    setGeoStatus('trip', null);
+    var adv = $('#trip-advanced');
+    if (adv) adv.open = false;
     $('#trip-modal').classList.add('visible');
   }
 
@@ -1756,8 +1839,6 @@ window.initAdmin = function() {
     var date = $('#trip-date').value;
     var city = $('#trip-city').value.trim();
     var country = $('#trip-country').value.trim();
-    var lat = parseFloat($('#trip-lat').value);
-    var lng = parseFloat($('#trip-lng').value);
     var mode = $('#trip-mode').value;
     var notes = $('#trip-notes').value.trim();
 
@@ -1765,26 +1846,43 @@ window.initAdmin = function() {
       showToast('Please fill Date, City, and Country', 'error');
       return;
     }
-    if (isNaN(lat) || isNaN(lng)) {
-      showToast('Latitude and Longitude are required. Try a known city or enter manually.', 'error');
-      return;
-    }
-    if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-      showToast('Invalid coordinates. Lat: -90 to 90, Lng: -180 to 180', 'error');
-      return;
+
+    function finishSave() {
+      var lat = parseFloat($('#trip-lat').value);
+      var lng = parseFloat($('#trip-lng').value);
+      if (isNaN(lat) || isNaN(lng)) {
+        showToast('Couldn\'t find that location. Try a different spelling or set coordinates in Advanced.', 'error');
+        return;
+      }
+      if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+        showToast('Invalid coordinates. Lat: -90 to 90, Lng: -180 to 180', 'error');
+        return;
+      }
+      var trip = { date: date, city: city, country: country, lat: lat, lng: lng, mode: mode, notes: notes };
+      if (editingTripIndex >= 0) {
+        data.trips[editingTripIndex] = trip;
+        showToast('Trip updated');
+      } else {
+        data.trips.push(trip);
+        showToast('Trip added');
+      }
+      saveToStorage();
+      closeTripModal();
+      renderAll();
     }
 
-    var trip = { date: date, city: city, country: country, lat: lat, lng: lng, mode: mode, notes: notes };
-    if (editingTripIndex >= 0) {
-      data.trips[editingTripIndex] = trip;
-      showToast('Trip updated');
-    } else {
-      data.trips.push(trip);
-      showToast('Trip added');
+    // If coords already filled (manual entry or already geocoded), save immediately
+    var existingLat = parseFloat($('#trip-lat').value);
+    var existingLng = parseFloat($('#trip-lng').value);
+    if (!isNaN(existingLat) && !isNaN(existingLng)) {
+      finishSave();
+      return;
     }
-    saveToStorage();
-    closeTripModal();
-    renderAll();
+    // Otherwise auto-geocode then save
+    autoGeocode('trip').then(function(ok) {
+      if (ok) finishSave();
+      else showToast('Couldn\'t find that location. Try a different spelling or set coordinates in Advanced.', 'error');
+    });
   }
 
   // CITY GEOCODING LOOKUP for trips
@@ -1845,25 +1943,104 @@ window.initAdmin = function() {
     'coimbatore': { lat: 11.0168, lng: 76.9558 }, 'visakhapatnam': { lat: 17.6868, lng: 83.2185 },
   };
 
-  function lookupCityCoords() {
-    var cityVal = ($('#trip-city').value || '').trim().toLowerCase();
-    if (cityVal && KNOWN_CITIES[cityVal]) {
-      var coords = KNOWN_CITIES[cityVal];
-      if (!$('#trip-lat').value) $('#trip-lat').value = coords.lat;
-      if (!$('#trip-lng').value) $('#trip-lng').value = coords.lng;
-    }
-    // Also check airports data for city names
-    if (cityVal && (!$('#trip-lat').value || !$('#trip-lng').value)) {
-      var entries = Object.values(data.airports);
-      for (var i = 0; i < entries.length; i++) {
-        if (entries[i].city.toLowerCase() === cityVal) {
-          if (!$('#trip-lat').value) $('#trip-lat').value = entries[i].lat;
-          if (!$('#trip-lng').value) $('#trip-lng').value = entries[i].lng;
-          break;
-        }
+  // GEOCODING — local + Nominatim fallback
+  // Cache results in-memory to avoid repeat API calls within a session
+  var geoCache = {};
+
+  function localGeocode(city, country) {
+    var cityLow = (city || '').trim().toLowerCase();
+    if (!cityLow) return null;
+    if (KNOWN_CITIES[cityLow]) return KNOWN_CITIES[cityLow];
+    // Check existing airports for a city match
+    var entries = Object.values(data.airports);
+    for (var i = 0; i < entries.length; i++) {
+      if (entries[i].city && entries[i].city.toLowerCase() === cityLow) {
+        return { lat: entries[i].lat, lng: entries[i].lng };
       }
     }
+    return null;
   }
+
+  function nominatimGeocode(city, country) {
+    var key = (city + '|' + country).toLowerCase();
+    if (geoCache[key]) return Promise.resolve(geoCache[key]);
+    var q = encodeURIComponent(city + (country ? ', ' + country : ''));
+    var url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + q;
+    return fetch(url, { headers: { 'Accept': 'application/json' } })
+      .then(function(r) { return r.ok ? r.json() : []; })
+      .then(function(results) {
+        if (results && results.length > 0) {
+          var coords = { lat: parseFloat(results[0].lat), lng: parseFloat(results[0].lon), display: results[0].display_name };
+          geoCache[key] = coords;
+          return coords;
+        }
+        return null;
+      })
+      .catch(function() { return null; });
+  }
+
+  function setGeoStatus(prefix, mode, text) {
+    var el = $('#' + prefix + '-geo-status');
+    if (!el) return;
+    el.classList.remove('searching', 'success', 'error', 'visible');
+    if (!mode) return;
+    el.classList.add('visible', mode);
+    var icon = '';
+    if (mode === 'searching') icon = '<span class="geo-spinner"></span>';
+    else if (mode === 'success') icon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+    else if (mode === 'error') icon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+    el.innerHTML = icon + '<span>' + text + '</span>';
+  }
+
+  // Auto-geocode a modal's city/country into its lat/lng inputs.
+  // prefix is 'trip' or 'airport'. Returns Promise<bool> indicating success.
+  function autoGeocode(prefix) {
+    var city = ($('#' + prefix + '-city').value || '').trim();
+    var country = ($('#' + prefix + '-country').value || '').trim();
+    var latEl = $('#' + prefix + '-lat');
+    var lngEl = $('#' + prefix + '-lng');
+
+    if (!city) {
+      setGeoStatus(prefix, null);
+      return Promise.resolve(false);
+    }
+
+    // Try local first (instant, no network)
+    var local = localGeocode(city, country);
+    if (local) {
+      latEl.value = local.lat;
+      lngEl.value = local.lng;
+      setGeoStatus(prefix, 'success', 'Location found: ' + city + (country ? ', ' + country : ''));
+      return Promise.resolve(true);
+    }
+
+    // Fall back to Nominatim
+    setGeoStatus(prefix, 'searching', 'Finding location…');
+    return nominatimGeocode(city, country).then(function(coords) {
+      if (coords) {
+        latEl.value = coords.lat.toFixed(4);
+        lngEl.value = coords.lng.toFixed(4);
+        var label = (coords.display || (city + (country ? ', ' + country : ''))).split(',').slice(0, 2).join(',').trim();
+        setGeoStatus(prefix, 'success', 'Location found: ' + label);
+        return true;
+      } else {
+        setGeoStatus(prefix, 'error', 'Couldn\'t find that location — check spelling or set coordinates manually below');
+        return false;
+      }
+    });
+  }
+
+  // Debounced auto-geocode on city/country input
+  var geoDebounceTimers = {};
+  function scheduleAutoGeocode(prefix) {
+    clearTimeout(geoDebounceTimers[prefix]);
+    geoDebounceTimers[prefix] = setTimeout(function() {
+      autoGeocode(prefix);
+    }, 600);
+  }
+
+  // Legacy alias used elsewhere
+  function lookupCityCoords() { autoGeocode('trip'); }
 
   // AIRPORT MODAL
   function openAirportModal(code) {
@@ -1888,6 +2065,10 @@ window.initAdmin = function() {
       $('#airport-lat').value = '';
       $('#airport-lng').value = '';
     }
+    // Reset geo status and collapse advanced section
+    setGeoStatus('airport', null);
+    var adv = $('#airport-advanced');
+    if (adv) adv.open = false;
     $('#airport-modal').classList.add('visible');
   }
 
@@ -1899,10 +2080,8 @@ window.initAdmin = function() {
     var code = $('#airport-code').value.toUpperCase().trim();
     var city = $('#airport-city').value.trim();
     var country = $('#airport-country').value.trim();
-    var lat = parseFloat($('#airport-lat').value);
-    var lng = parseFloat($('#airport-lng').value);
-    if (!code || !city || !country || isNaN(lat) || isNaN(lng)) {
-      showToast('Please fill all fields correctly', 'error');
+    if (!code || !city || !country) {
+      showToast('Please fill Code, City, and Country', 'error');
       return;
     }
     if (code.length !== 3) {
@@ -1913,11 +2092,35 @@ window.initAdmin = function() {
       showToast('Airport ' + code + ' already exists', 'error');
       return;
     }
-    data.airports[code] = { lat: lat, lng: lng, city: city, country: country };
-    saveToStorage();
-    closeAirportModal();
-    showToast(editingAirportCode ? 'Airport updated' : 'Airport added');
-    renderAll();
+
+    function finishSave() {
+      var lat = parseFloat($('#airport-lat').value);
+      var lng = parseFloat($('#airport-lng').value);
+      if (isNaN(lat) || isNaN(lng)) {
+        showToast('Couldn\'t find that location. Try a different spelling or set coordinates in Advanced.', 'error');
+        return;
+      }
+      if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+        showToast('Invalid coordinates. Lat: -90 to 90, Lng: -180 to 180', 'error');
+        return;
+      }
+      data.airports[code] = { lat: lat, lng: lng, city: city, country: country };
+      saveToStorage();
+      closeAirportModal();
+      showToast(editingAirportCode ? 'Airport updated' : 'Airport added');
+      renderAll();
+    }
+
+    var existingLat = parseFloat($('#airport-lat').value);
+    var existingLng = parseFloat($('#airport-lng').value);
+    if (!isNaN(existingLat) && !isNaN(existingLng)) {
+      finishSave();
+      return;
+    }
+    autoGeocode('airport').then(function(ok) {
+      if (ok) finishSave();
+      else showToast('Couldn\'t find that location. Try a different spelling or set coordinates in Advanced.', 'error');
+    });
   }
 
   // CONFIRM
@@ -2316,9 +2519,34 @@ window.initAdmin = function() {
       if (e.target.id === 'trip-modal') closeTripModal();
     });
 
-    // Auto-lookup city coords for trips
-    $('#trip-city').addEventListener('blur', lookupCityCoords);
-    $('#trip-city').addEventListener('change', lookupCityCoords);
+    // Auto-geocode for trips — debounced on input, instant on blur
+    $('#trip-city').addEventListener('input', function() {
+      // Clear stale lat/lng so save will re-geocode
+      $('#trip-lat').value = '';
+      $('#trip-lng').value = '';
+      scheduleAutoGeocode('trip');
+    });
+    $('#trip-country').addEventListener('input', function() {
+      $('#trip-lat').value = '';
+      $('#trip-lng').value = '';
+      scheduleAutoGeocode('trip');
+    });
+    $('#trip-city').addEventListener('blur', function() { autoGeocode('trip'); });
+    $('#trip-country').addEventListener('blur', function() { autoGeocode('trip'); });
+
+    // Auto-geocode for airports
+    $('#airport-city').addEventListener('input', function() {
+      $('#airport-lat').value = '';
+      $('#airport-lng').value = '';
+      scheduleAutoGeocode('airport');
+    });
+    $('#airport-country').addEventListener('input', function() {
+      $('#airport-lat').value = '';
+      $('#airport-lng').value = '';
+      scheduleAutoGeocode('airport');
+    });
+    $('#airport-city').addEventListener('blur', function() { autoGeocode('airport'); });
+    $('#airport-country').addEventListener('blur', function() { autoGeocode('airport'); });
 
     // Confirm dialog
     $('#confirm-cancel').addEventListener('click', closeConfirm);
