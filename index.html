@@ -1027,9 +1027,16 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           <span>Import CSV</span>
         </button>
-        <button class="btn btn-sm btn-success" id="btn-save-export" title="Save & Export">
+        <button class="btn btn-sm" id="btn-save-export" title="Download data.json">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          <span>Save &amp; Export</span>
+          <span>Download</span>
+        </button>
+        <button class="btn btn-sm" id="btn-github-settings" title="GitHub publish settings">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+        <button class="btn btn-sm btn-success" id="btn-publish-github" title="Publish to GitHub Pages">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          <span>Publish</span>
         </button>
         <button class="btn btn-sm btn-danger" id="btn-reset" title="Reset to Original">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
@@ -1325,6 +1332,50 @@
       <div class="confirm-actions">
         <button class="btn" id="confirm-cancel">Cancel</button>
         <button class="btn btn-danger" id="confirm-ok">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GITHUB SETTINGS MODAL -->
+  <div class="modal-overlay" id="github-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>GitHub Publish Settings</h2>
+        <button class="btn-icon" id="github-modal-close">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-hint" style="margin-bottom:14px;line-height:1.5;">
+          To publish changes directly to your live globe, you need a GitHub Personal Access Token. The token is stored only in this browser and never sent anywhere except to GitHub itself.
+        </div>
+        <div class="form-group">
+          <label>GitHub Personal Access Token</label>
+          <input type="password" class="form-input" id="github-token" placeholder="github_pat_... or ghp_..." autocomplete="off">
+          <div class="form-hint" style="margin-top:6px;">
+            <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noopener" style="color:var(--color-accent);">Create a fine-grained token</a> with <strong>Contents: Read and write</strong> on the <code>travel-globe</code> repo only. Or use a classic token with <code>repo</code> scope.
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Repo Owner</label>
+            <input type="text" class="form-input" id="github-owner" placeholder="nitinnagpal-rgb">
+          </div>
+          <div class="form-group">
+            <label>Repo Name</label>
+            <input type="text" class="form-input" id="github-repo" placeholder="travel-globe">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Branch</label>
+          <input type="text" class="form-input" id="github-branch" placeholder="main">
+        </div>
+        <div class="form-hint" id="github-status" style="margin-top:8px;"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger" id="github-clear" style="margin-right:auto;">Clear Token</button>
+        <button class="btn" id="github-test">Test Connection</button>
+        <button class="btn btn-primary" id="github-save">Save Settings</button>
       </div>
     </div>
   </div>
@@ -2667,6 +2718,193 @@ window.initAdmin = function() {
       reader.readAsText(file);
     });
 
+    // ===================== GITHUB PUBLISH =====================
+    var GH_KEYS = { token: 'tg_gh_token', owner: 'tg_gh_owner', repo: 'tg_gh_repo', branch: 'tg_gh_branch' };
+    var GH_DEFAULTS = { owner: 'nitinnagpal-rgb', repo: 'travel-globe', branch: 'main' };
+
+    function ghStore(key, val) {
+      try {
+        if (val === null || val === undefined) localStorage.removeItem(key);
+        else localStorage.setItem(key, val);
+      } catch (e) { /* localStorage unavailable */ }
+    }
+    function ghLoad(key) {
+      try { return localStorage.getItem(key); } catch (e) { return null; }
+    }
+    function ghGetSettings() {
+      return {
+        token: ghLoad(GH_KEYS.token) || '',
+        owner: ghLoad(GH_KEYS.owner) || GH_DEFAULTS.owner,
+        repo: ghLoad(GH_KEYS.repo) || GH_DEFAULTS.repo,
+        branch: ghLoad(GH_KEYS.branch) || GH_DEFAULTS.branch,
+      };
+    }
+
+    // base64 encode UTF-8 string (for GitHub Contents API)
+    function utf8ToBase64(str) {
+      // unescape(encodeURIComponent(...)) handles non-ASCII chars properly
+      return btoa(unescape(encodeURIComponent(str)));
+    }
+
+    function setGithubStatus(text, kind) {
+      var el = $('#github-status');
+      if (!el) return;
+      el.textContent = text || '';
+      var color = '';
+      if (kind === 'success') color = '#22c55e';
+      else if (kind === 'error') color = '#f97316';
+      else if (kind === 'searching') color = 'var(--color-accent)';
+      el.style.color = color;
+    }
+
+    function openGithubModal() {
+      var s = ghGetSettings();
+      $('#github-token').value = s.token;
+      $('#github-owner').value = s.owner;
+      $('#github-repo').value = s.repo;
+      $('#github-branch').value = s.branch;
+      setGithubStatus('', '');
+      $('#github-modal').classList.add('visible');
+    }
+    function closeGithubModal() { $('#github-modal').classList.remove('visible'); }
+
+    function ghApiHeaders(token) {
+      return {
+        'Accept': 'application/vnd.github+json',
+        'Authorization': 'Bearer ' + token,
+        'X-GitHub-Api-Version': '2022-11-28',
+      };
+    }
+
+    // Test that token has access to the repo
+    function ghTestConnection(s) {
+      var url = 'https://api.github.com/repos/' + s.owner + '/' + s.repo;
+      return fetch(url, { headers: ghApiHeaders(s.token) }).then(function(r) {
+        if (r.ok) return r.json().then(function(j) { return { ok: true, repo: j }; });
+        return r.json().then(function(j) { return { ok: false, status: r.status, message: j.message || 'Request failed' }; }).catch(function() {
+          return { ok: false, status: r.status, message: 'Request failed' };
+        });
+      }).catch(function(e) { return { ok: false, message: e.message }; });
+    }
+
+    // Get current data.json SHA (needed to update)
+    function ghGetFileSha(s, path) {
+      var url = 'https://api.github.com/repos/' + s.owner + '/' + s.repo + '/contents/' + path + '?ref=' + encodeURIComponent(s.branch);
+      return fetch(url, { headers: ghApiHeaders(s.token) }).then(function(r) {
+        if (r.status === 404) return null; // file doesn't exist yet
+        if (!r.ok) return Promise.reject(new Error('GET file failed: ' + r.status));
+        return r.json().then(function(j) { return j.sha; });
+      });
+    }
+
+    // Commit data.json to repo
+    function ghPutFile(s, path, content, sha, message) {
+      var url = 'https://api.github.com/repos/' + s.owner + '/' + s.repo + '/contents/' + path;
+      var body = { message: message, content: utf8ToBase64(content), branch: s.branch };
+      if (sha) body.sha = sha;
+      return fetch(url, {
+        method: 'PUT',
+        headers: ghApiHeaders(s.token),
+        body: JSON.stringify(body),
+      }).then(function(r) {
+        return r.json().then(function(j) { return { ok: r.ok, status: r.status, body: j }; });
+      });
+    }
+
+    function publishToGitHub() {
+      var s = ghGetSettings();
+      if (!s.token) {
+        showToast('No GitHub token saved — opening settings', 'error');
+        openGithubModal();
+        return;
+      }
+      if (!s.owner || !s.repo || !s.branch) {
+        showToast('GitHub settings incomplete — opening settings', 'error');
+        openGithubModal();
+        return;
+      }
+      var btn = $('#btn-publish-github');
+      var originalHTML = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="geo-spinner"></span><span>Publishing…</span>';
+      showToast('Publishing to GitHub…');
+
+      var json = JSON.stringify(data, null, 2);
+      var commitMsg = 'Update data.json from admin (' + new Date().toISOString().slice(0, 19).replace('T', ' ') + ' UTC)';
+
+      ghGetFileSha(s, 'data.json')
+        .then(function(sha) { return ghPutFile(s, 'data.json', json, sha, commitMsg); })
+        .then(function(result) {
+          btn.disabled = false;
+          btn.innerHTML = originalHTML;
+          if (result.ok) {
+            var commitUrl = (result.body.commit && result.body.commit.html_url) || '';
+            showToast('Published! GitHub Pages will refresh in ~30–60 seconds.');
+            console.log('Commit:', commitUrl);
+          } else {
+            var msg = (result.body && result.body.message) || ('HTTP ' + result.status);
+            if (result.status === 401) msg = 'Token rejected — check it has Contents: Read and write on this repo';
+            else if (result.status === 404) msg = 'Repo not found — check owner/repo names in settings';
+            else if (result.status === 409) msg = 'Conflict — someone else committed at the same time. Try again.';
+            showToast('Publish failed: ' + msg, 'error');
+          }
+        })
+        .catch(function(e) {
+          btn.disabled = false;
+          btn.innerHTML = originalHTML;
+          showToast('Publish failed: ' + (e.message || 'network error'), 'error');
+        });
+    }
+
+    // GitHub modal events
+    $('#btn-github-settings').addEventListener('click', openGithubModal);
+    $('#btn-publish-github').addEventListener('click', publishToGitHub);
+    $('#github-modal-close').addEventListener('click', closeGithubModal);
+    $('#github-modal').addEventListener('click', function(e) {
+      if (e.target.id === 'github-modal') closeGithubModal();
+    });
+    $('#github-save').addEventListener('click', function() {
+      var token = $('#github-token').value.trim();
+      var owner = $('#github-owner').value.trim() || GH_DEFAULTS.owner;
+      var repo = $('#github-repo').value.trim() || GH_DEFAULTS.repo;
+      var branch = $('#github-branch').value.trim() || GH_DEFAULTS.branch;
+      if (!token) { setGithubStatus('Please paste a GitHub token first', 'error'); return; }
+      ghStore(GH_KEYS.token, token);
+      ghStore(GH_KEYS.owner, owner);
+      ghStore(GH_KEYS.repo, repo);
+      ghStore(GH_KEYS.branch, branch);
+      setGithubStatus('Settings saved. You can now click Publish.', 'success');
+      showToast('GitHub settings saved');
+    });
+    $('#github-test').addEventListener('click', function() {
+      var s = {
+        token: $('#github-token').value.trim(),
+        owner: $('#github-owner').value.trim() || GH_DEFAULTS.owner,
+        repo: $('#github-repo').value.trim() || GH_DEFAULTS.repo,
+        branch: $('#github-branch').value.trim() || GH_DEFAULTS.branch,
+      };
+      if (!s.token) { setGithubStatus('Please paste a token first', 'error'); return; }
+      setGithubStatus('Testing connection…', 'searching');
+      ghTestConnection(s).then(function(res) {
+        if (res.ok) {
+          var perm = res.repo.permissions || {};
+          if (perm.push) setGithubStatus('Connected to ' + res.repo.full_name + ' \u2014 token has write access \u2713', 'success');
+          else setGithubStatus('Connected, but token does NOT have write access. You need Contents: Read and write.', 'error');
+        } else {
+          var hint = '';
+          if (res.status === 401) hint = ' (token is invalid or expired)';
+          else if (res.status === 404) hint = ' (repo not found, or token has no access)';
+          setGithubStatus('Failed: ' + (res.message || 'Unknown') + hint, 'error');
+        }
+      });
+    });
+    $('#github-clear').addEventListener('click', function() {
+      ghStore(GH_KEYS.token, null);
+      $('#github-token').value = '';
+      setGithubStatus('Token cleared from this browser', 'success');
+      showToast('Token cleared');
+    });
+
     // Auto-calc distance
     $('#flight-from').addEventListener('change', autoCalcDistance);
     $('#flight-to').addEventListener('change', autoCalcDistance);
@@ -2683,6 +2921,7 @@ window.initAdmin = function() {
         closeAirportModal();
         closeTripModal();
         closeConfirm();
+        closeGithubModal();
       }
     });
   }
