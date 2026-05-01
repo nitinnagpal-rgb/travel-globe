@@ -947,6 +947,11 @@
       <div class="stat-divider"></div>
       <div class="stat">
         <span class="stat-number" data-target="0">0</span>
+        <span class="stat-label">Countries</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-number" data-target="0">0</span>
         <span class="stat-label">Cities Visited</span>
       </div>
     </div>
@@ -1535,11 +1540,27 @@ window.initAdmin = function() {
 
     var tripCount = (data.trips || []).length;
 
+    // Compute unique cities and countries across BOTH airports and trips
+    // Dedupe case-insensitively to avoid double counting ("Paris" / "paris")
+    var cities = new Set();
+    var countries = new Set();
+    Object.keys(airports).forEach(function(code) {
+      var ap = airports[code];
+      if (ap && ap.city) cities.add(ap.city.trim().toLowerCase());
+      if (ap && ap.country) countries.add(ap.country.trim().toLowerCase());
+    });
+    (data.trips || []).forEach(function(t) {
+      if (t.city) cities.add(t.city.trim().toLowerCase());
+      if (t.country) countries.add(t.country.trim().toLowerCase());
+    });
+
     var stats = [
       { label: 'Total Flights', value: flights.length.toLocaleString(), color: 'var(--color-na)' },
       { label: 'Airports', value: Object.keys(airports).length.toLocaleString(), color: 'var(--color-oceania)' },
+      { label: 'Cities Visited', value: cities.size.toLocaleString(), color: 'var(--color-ant)' },
+      { label: 'Countries', value: countries.size.toLocaleString(), color: 'var(--color-af)' },
       { label: 'Airlines', value: airlines.size.toLocaleString(), color: 'var(--color-eu)' },
-      { label: 'Trips', value: tripCount.toLocaleString(), color: 'var(--color-af)' },
+      { label: 'Trips', value: tripCount.toLocaleString(), color: 'var(--color-success)' },
       { label: 'Miles Flown', value: totalDist.toLocaleString(), color: 'var(--color-asia)' },
       { label: 'Date Range', value: dateRange, color: 'var(--color-sa)' },
     ];

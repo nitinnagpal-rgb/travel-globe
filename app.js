@@ -645,8 +645,9 @@ function updateStats(flights) {
   const airlines = new Set();
   let totalDist = 0;
   const continents = new Set();
-  // Cities are deduped by lowercased name (so "Paris" and "paris" only count once)
+  // Cities and countries are deduped by lowercased name (so "Paris" and "paris" only count once)
   const cities = new Set();
+  const countries = new Set();
 
   flights.forEach(f => {
     airports.add(f.from);
@@ -659,6 +660,8 @@ function updateStats(flights) {
         if (r !== 'other') continents.add(r);
         const cityName = AIRPORTS[code].city;
         if (cityName) cities.add(cityName.trim().toLowerCase());
+        const countryName = AIRPORTS[code].country;
+        if (countryName) countries.add(countryName.trim().toLowerCase());
       }
     });
   });
@@ -669,11 +672,12 @@ function updateStats(flights) {
     return true;
   });
 
-  // Add trip cities & regions
+  // Add trip cities, countries & regions
   filteredTrips.forEach(t => {
     const r = getRegionByCountry(t.country, t.lat);
     if (r !== 'other') continents.add(r);
     if (t.city) cities.add(t.city.trim().toLowerCase());
+    if (t.country) countries.add(t.country.trim().toLowerCase());
   });
 
   document.querySelectorAll('#globe-view .stat-number').forEach(el => {
@@ -685,6 +689,7 @@ function updateStats(flights) {
     else if (label === 'Airports') target = airports.size;
     else if (label === 'Airlines') target = airlines.size;
     else if (label === 'Continents') target = continents.size;
+    else if (label === 'Countries') target = countries.size;
     else if (label === 'Cities Visited') target = cities.size;
     else return;
 
