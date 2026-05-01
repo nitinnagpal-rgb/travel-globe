@@ -2898,5 +2898,15 @@
       "dist": 6526
     }
   ],
-  "trips": []
+  "trips": [
+    {
+      "date": "2023-02-18",
+      "city": "Drake Passage",
+      "country": "Antarctica",
+      "lat": -58.5555,
+      "lng": -62.4831,
+      "mode": "Boat",
+      "notes": "Antarctica Expedition"
+    }
+  ]
 }
