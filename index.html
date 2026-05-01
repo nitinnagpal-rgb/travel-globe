@@ -947,7 +947,7 @@
       <div class="stat-divider"></div>
       <div class="stat">
         <span class="stat-number" data-target="0">0</span>
-        <span class="stat-label">Trips</span>
+        <span class="stat-label">Cities Visited</span>
       </div>
     </div>
   </header>
@@ -1146,6 +1146,7 @@
               <th data-sort="city">City <span class="sort-arrow">▼</span></th>
               <th data-sort="country">Country <span class="sort-arrow">▼</span></th>
               <th data-sort="mode">Mode <span class="sort-arrow">▼</span></th>
+              <th data-sort="from">From <span class="sort-arrow">▼</span></th>
               <th data-sort="notes">Notes <span class="sort-arrow">▼</span></th>
               <th class="actions-cell">Actions</th>
             </tr>
@@ -1311,6 +1312,10 @@
             <option value="Bicycle">Bicycle</option>
             <option value="Other">Other</option>
           </select>
+        </div>
+        <div class="form-group">
+          <label>From <span style="opacity:0.6;font-weight:400;">(optional)</span></label>
+          <input type="text" class="form-input" id="trip-from" placeholder="e.g. Ushuaia, Argentina (where you departed from)">
         </div>
         <div class="form-group">
           <label>Notes (optional)</label>
@@ -1714,6 +1719,7 @@ window.initAdmin = function() {
         return (t.city || '').toLowerCase().includes(q) ||
           (t.country || '').toLowerCase().includes(q) ||
           (t.mode || '').toLowerCase().includes(q) ||
+          (t.from || '').toLowerCase().includes(q) ||
           (t.notes || '').toLowerCase().includes(q) ||
           (t.date || '').includes(q);
       });
@@ -1741,7 +1747,7 @@ window.initAdmin = function() {
     var tbody = $('#trips-tbody');
 
     if (total === 0) {
-      tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><h3>No trips found</h3><p>' + (tripSearch ? 'Try a different search term' : 'Add your first trip') + '</p></div></td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><h3>No trips found</h3><p>' + (tripSearch ? 'Try a different search term' : 'Add your first trip') + '</p></div></td></tr>';
     } else {
       tbody.innerHTML = pageTrips.map(function(t) {
         var origIdx = data.trips.indexOf(t);
@@ -1750,6 +1756,7 @@ window.initAdmin = function() {
           '<td>' + (t.city || '') + '</td>' +
           '<td>' + (t.country || '') + '</td>' +
           '<td><span class="mode-badge">' + (t.mode || '—') + '</span></td>' +
+          '<td><span class="notes-text">' + (t.from || '—') + '</span></td>' +
           '<td><span class="notes-text">' + (t.notes || '—') + '</span></td>' +
           '<td class="actions-cell">' +
           '<button class="btn-icon edit-trip" data-idx="' + origIdx + '" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>' +
@@ -1864,6 +1871,7 @@ window.initAdmin = function() {
       $('#trip-lat').value = t.lat != null ? t.lat : '';
       $('#trip-lng').value = t.lng != null ? t.lng : '';
       $('#trip-mode').value = t.mode || '';
+      $('#trip-from').value = t.from || '';
       $('#trip-notes').value = t.notes || '';
     } else {
       title.textContent = 'Add Trip';
@@ -1873,6 +1881,7 @@ window.initAdmin = function() {
       $('#trip-lat').value = '';
       $('#trip-lng').value = '';
       $('#trip-mode').value = '';
+      $('#trip-from').value = '';
       $('#trip-notes').value = '';
     }
     // Reset geo status and collapse advanced section
@@ -1891,6 +1900,7 @@ window.initAdmin = function() {
     var city = $('#trip-city').value.trim();
     var country = $('#trip-country').value.trim();
     var mode = $('#trip-mode').value;
+    var from = $('#trip-from').value.trim();
     var notes = $('#trip-notes').value.trim();
 
     if (!date || !city) {
@@ -1909,7 +1919,7 @@ window.initAdmin = function() {
         showToast('Invalid coordinates. Lat: -90 to 90, Lng: -180 to 180', 'error');
         return;
       }
-      var trip = { date: date, city: city, country: country, lat: lat, lng: lng, mode: mode, notes: notes };
+      var trip = { date: date, city: city, country: country, lat: lat, lng: lng, mode: mode, from: from, notes: notes };
       if (editingTripIndex >= 0) {
         data.trips[editingTripIndex] = trip;
         showToast('Trip updated');
