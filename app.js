@@ -567,16 +567,51 @@ legendToggle.addEventListener('click', () => {
 // ===========================
 
 let activeYear = 'all';
-const yearBtns = document.querySelectorAll('.year-btn');
 
-yearBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    yearBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    activeYear = btn.dataset.year;
-    updateVisibility();
+// Build year buttons dynamically from flight + trip dates so newly-added years
+// (e.g. 2025, 2026) automatically appear without a code change.
+function buildYearFilter() {
+  const years = new Set();
+  FLIGHTS.forEach(f => {
+    if (f.date && f.date.length >= 4) years.add(f.date.slice(0, 4));
   });
-});
+  TRIPS.forEach(t => {
+    if (t.date && t.date.length >= 4) years.add(t.date.slice(0, 4));
+  });
+  // Sort newest first; only keep 4-digit numeric strings
+  const sortedYears = Array.from(years)
+    .filter(y => /^\d{4}$/.test(y))
+    .sort((a, b) => b.localeCompare(a));
+
+  const container = document.getElementById('year-filter');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const allBtn = document.createElement('button');
+  allBtn.className = 'year-btn active';
+  allBtn.dataset.year = 'all';
+  allBtn.textContent = 'All Years';
+  container.appendChild(allBtn);
+
+  sortedYears.forEach(y => {
+    const b = document.createElement('button');
+    b.className = 'year-btn';
+    b.dataset.year = y;
+    b.textContent = y;
+    container.appendChild(b);
+  });
+
+  const yearBtns = container.querySelectorAll('.year-btn');
+  yearBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      yearBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeYear = btn.dataset.year;
+      updateVisibility();
+    });
+  });
+}
+buildYearFilter();
 
 // ===========================
 // VISIBILITY UPDATES
