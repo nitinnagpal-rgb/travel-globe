@@ -41,13 +41,20 @@ const REGIONS = {
   'antarctica':    { label: 'Antarctica', color: '#00e5ff' },
 };
 
-// Region classification for trips (by country name)
-function getRegionByCountry(country) {
+// Region classification for trips (by country name OR by latitude as fallback)
+function getRegionByCountry(country, lat) {
   if (['USA', 'Canada', 'Mexico'].includes(country)) return 'north-america';
   if (['Argentina', 'Peru', 'Panama', 'Brazil', 'Chile', 'Colombia', 'Ecuador', 'Bolivia', 'Uruguay', 'Paraguay', 'Venezuela'].includes(country)) return 'south-america';
   if (['India', 'Thailand', 'Singapore', 'Japan', 'China', 'South Korea', 'Vietnam', 'Malaysia', 'Indonesia', 'Philippines', 'Sri Lanka', 'Nepal', 'Bangladesh', 'Myanmar', 'Cambodia', 'Laos', 'Taiwan', 'Hong Kong', 'UAE', 'Israel', 'Turkey', 'Saudi Arabia', 'Qatar', 'Jordan', 'Lebanon', 'Oman', 'Bahrain', 'Kuwait'].includes(country)) return 'asia';
   if (['Australia', 'New Zealand', 'Fiji', 'Papua New Guinea'].includes(country)) return 'oceania';
   if (['UK', 'Germany', 'France', 'Netherlands', 'Sweden', 'Denmark', 'Norway', 'Finland', 'Belgium', 'Spain', 'Austria', 'Slovakia', 'Switzerland', 'Italy', 'Portugal', 'Ireland', 'Greece', 'Poland', 'Czech Republic', 'Hungary', 'Romania', 'Croatia', 'Iceland', 'Estonia', 'Latvia', 'Lithuania', 'Slovenia', 'Serbia', 'Bulgaria', 'Montenegro', 'Albania', 'North Macedonia', 'Bosnia and Herzegovina', 'Luxembourg', 'Malta', 'Cyprus', 'Scotland', 'Wales'].includes(country)) return 'europe';
+  // Antarctica and sub-Antarctic territories
+  if (['Antarctica', 'South Georgia', 'South Georgia and the South Sandwich Islands', 'Falkland Islands'].includes(country)) return 'antarctica';
+  // Latitude-based fallback for unrecognised places (e.g. islands with no country)
+  if (typeof lat === 'number') {
+    if (lat <= -55) return 'antarctica';
+    if (lat >= 60 && lat <= 75) return 'europe'; // Arctic Europe (Svalbard, etc.)
+  }
   return 'other';
 }
 
@@ -273,8 +280,8 @@ if (tripLocations.length > 0) {
   tripGlowMesh = new THREE.InstancedMesh(tripGlowGeom, tripGlowMat, tripLocations.length);
 
   tripLocations.forEach((t, i) => {
-    const region = getRegionByCountry(t.country);
-    const color = new THREE.Color(REGIONS[region]?.color || '#b0b0b0');
+    const region = getRegionByCountry(t.country, t.lat);
+    const color = new THREE.Color(REGIONS[region]?.color || '#7be3ff');
     const pos = latLngToVector3(t.lat, t.lng, GLOBE_RADIUS + 0.003);
 
     dummy.position.copy(pos);
@@ -660,7 +667,7 @@ function updateStats(flights) {
 
   // Add trip regions to continents
   filteredTrips.forEach(t => {
-    const r = getRegionByCountry(t.country);
+    const r = getRegionByCountry(t.country, t.lat);
     if (r !== 'other') continents.add(r);
   });
 
