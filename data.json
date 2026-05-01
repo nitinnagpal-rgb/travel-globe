@@ -2906,7 +2906,28 @@
       "lat": -58.5555,
       "lng": -62.4831,
       "mode": "Boat",
+      "from": "Ushuaia",
       "notes": "Antarctica Expedition"
+    },
+    {
+      "date": "2015-02-21",
+      "city": "Baijnath",
+      "country": "India",
+      "lat": 32.053,
+      "lng": 76.6722,
+      "mode": "Car",
+      "from": "Ghaziabad, India",
+      "notes": ""
+    },
+    {
+      "date": "2008-05-25",
+      "city": "Kristianstad",
+      "country": "Sweden",
+      "lat": 56.0294,
+      "lng": 14.1567,
+      "mode": "Train",
+      "from": "Stockholm, Sweden",
+      "notes": ""
     }
   ]
 }
