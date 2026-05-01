@@ -1222,15 +1222,15 @@
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>City</label>
-            <input type="text" class="form-input" id="airport-city" placeholder="e.g. San Francisco">
+            <label>City / Place</label>
+            <input type="text" class="form-input" id="airport-city" placeholder="e.g. San Francisco or Deception Island">
           </div>
           <div class="form-group">
-            <label>Country</label>
-            <input type="text" class="form-input" id="airport-country" placeholder="e.g. United States">
+            <label>Country / Region <span style="opacity:0.6;font-weight:400;">(optional)</span></label>
+            <input type="text" class="form-input" id="airport-country" placeholder="e.g. United States or Antarctica">
           </div>
         </div>
-        <div class="form-hint" style="margin: -8px 0 8px;">Coordinates are looked up automatically from the city + country.</div>
+        <div class="form-hint" style="margin: -8px 0 8px;">Coordinates are looked up automatically. Country is optional — works for places like islands or Antarctica.</div>
         <div class="geo-status" id="airport-geo-status"></div>
         <details class="advanced-section" id="airport-advanced">
           <summary>Advanced: set coordinates manually</summary>
@@ -1269,15 +1269,15 @@
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>City</label>
-            <input type="text" class="form-input" id="trip-city" placeholder="e.g. Jaipur">
+            <label>City / Place</label>
+            <input type="text" class="form-input" id="trip-city" placeholder="e.g. Jaipur or Deception Island">
           </div>
           <div class="form-group">
-            <label>Country</label>
-            <input type="text" class="form-input" id="trip-country" placeholder="e.g. India">
+            <label>Country / Region <span style="opacity:0.6;font-weight:400;">(optional)</span></label>
+            <input type="text" class="form-input" id="trip-country" placeholder="e.g. India or Antarctica">
           </div>
         </div>
-        <div class="form-hint" style="margin: -8px 0 8px;">Coordinates are looked up automatically from the city + country.</div>
+        <div class="form-hint" style="margin: -8px 0 8px;">Coordinates are looked up automatically. Country is optional — works for places like islands or Antarctica.</div>
         <div class="geo-status" id="trip-geo-status"></div>
         <details class="advanced-section" id="trip-advanced">
           <summary>Advanced: set coordinates manually</summary>
@@ -1842,8 +1842,8 @@ window.initAdmin = function() {
     var mode = $('#trip-mode').value;
     var notes = $('#trip-notes').value.trim();
 
-    if (!date || !city || !country) {
-      showToast('Please fill Date, City, and Country', 'error');
+    if (!date || !city) {
+      showToast('Please fill Date and City/Place', 'error');
       return;
     }
 
@@ -1941,6 +1941,39 @@ window.initAdmin = function() {
     'surat': { lat: 21.1702, lng: 72.8311 }, 'nagpur': { lat: 21.1458, lng: 79.0882 },
     'bhopal': { lat: 23.2599, lng: 77.4126 }, 'patna': { lat: 25.6093, lng: 85.1376 },
     'coimbatore': { lat: 11.0168, lng: 76.9558 }, 'visakhapatnam': { lat: 17.6868, lng: 83.2185 },
+    // Antarctica & sub-Antarctic islands (no country, often missed by quick lookups)
+    'deception island': { lat: -62.9667, lng: -60.6333 },
+    'king george island': { lat: -62.0833, lng: -58.3833 },
+    'half moon island': { lat: -62.5950, lng: -59.9167 },
+    'elephant island': { lat: -61.1333, lng: -55.1500 },
+    'paulet island': { lat: -63.5833, lng: -55.7833 },
+    'snow hill island': { lat: -64.4500, lng: -57.0000 },
+    'cuverville island': { lat: -64.6833, lng: -62.6333 },
+    'petermann island': { lat: -65.1667, lng: -64.1500 },
+    'pleneau island': { lat: -65.1000, lng: -64.0667 },
+    'danco island': { lat: -64.7333, lng: -62.6167 },
+    'wiencke island': { lat: -64.8167, lng: -63.4000 },
+    'anvers island': { lat: -64.5333, lng: -63.5833 },
+    'livingston island': { lat: -62.6000, lng: -60.5000 },
+    'ross island': { lat: -77.5167, lng: 168.0000 },
+    'south georgia': { lat: -54.4296, lng: -36.5879 },
+    'south georgia island': { lat: -54.4296, lng: -36.5879 },
+    'south sandwich islands': { lat: -57.7500, lng: -26.5000 },
+    'south orkney islands': { lat: -60.5833, lng: -45.5000 },
+    'south shetland islands': { lat: -62.0000, lng: -58.0000 },
+    'antarctic peninsula': { lat: -69.5000, lng: -65.0000 },
+    'mcmurdo station': { lat: -77.8419, lng: 166.6863 },
+    'palmer station': { lat: -64.7742, lng: -64.0531 },
+    'amundsen-scott station': { lat: -90.0000, lng: 0.0000 },
+    'south pole': { lat: -90.0000, lng: 0.0000 },
+    'antarctica': { lat: -82.8628, lng: 135.0000 },
+    // Other notable islands often missing a country
+    'easter island': { lat: -27.1127, lng: -109.3497 },
+    'galapagos': { lat: -0.9538, lng: -90.9656 },
+    'galapagos islands': { lat: -0.9538, lng: -90.9656 },
+    'falkland islands': { lat: -51.7963, lng: -59.5236 },
+    'svalbard': { lat: 78.2232, lng: 15.6267 },
+    'longyearbyen': { lat: 78.2232, lng: 15.6267 },
   };
 
   // GEOCODING — local + Nominatim fallback
@@ -1962,21 +1995,28 @@ window.initAdmin = function() {
   }
 
   function nominatimGeocode(city, country) {
-    var key = (city + '|' + country).toLowerCase();
+    var key = (city + '|' + (country || '')).toLowerCase();
     if (geoCache[key]) return Promise.resolve(geoCache[key]);
-    var q = encodeURIComponent(city + (country ? ', ' + country : ''));
-    var url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + q;
-    return fetch(url, { headers: { 'Accept': 'application/json' } })
-      .then(function(r) { return r.ok ? r.json() : []; })
-      .then(function(results) {
-        if (results && results.length > 0) {
-          var coords = { lat: parseFloat(results[0].lat), lng: parseFloat(results[0].lon), display: results[0].display_name };
-          geoCache[key] = coords;
-          return coords;
-        }
-        return null;
-      })
-      .catch(function() { return null; });
+    // Try the most specific query first (city + country if provided), then fall back to city alone
+    var queries = [];
+    if (country) queries.push(city + ', ' + country);
+    queries.push(city);
+    function tryNext(i) {
+      if (i >= queries.length) return Promise.resolve(null);
+      var url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(queries[i]);
+      return fetch(url, { headers: { 'Accept': 'application/json' } })
+        .then(function(r) { return r.ok ? r.json() : []; })
+        .then(function(results) {
+          if (results && results.length > 0) {
+            var coords = { lat: parseFloat(results[0].lat), lng: parseFloat(results[0].lon), display: results[0].display_name };
+            geoCache[key] = coords;
+            return coords;
+          }
+          return tryNext(i + 1);
+        })
+        .catch(function() { return tryNext(i + 1); });
+    }
+    return tryNext(0);
   }
 
   function setGeoStatus(prefix, mode, text) {
@@ -2013,6 +2053,9 @@ window.initAdmin = function() {
       setGeoStatus(prefix, 'success', 'Location found: ' + city + (country ? ', ' + country : ''));
       return Promise.resolve(true);
     }
+
+    // No country provided? Allow lookup anyway (e.g. islands, Antarctica)
+    // Just go straight to Nominatim with city alone.
 
     // Fall back to Nominatim
     setGeoStatus(prefix, 'searching', 'Finding location…');
@@ -2080,8 +2123,8 @@ window.initAdmin = function() {
     var code = $('#airport-code').value.toUpperCase().trim();
     var city = $('#airport-city').value.trim();
     var country = $('#airport-country').value.trim();
-    if (!code || !city || !country) {
-      showToast('Please fill Code, City, and Country', 'error');
+    if (!code || !city) {
+      showToast('Please fill Code and City/Place', 'error');
       return;
     }
     if (code.length !== 3) {
