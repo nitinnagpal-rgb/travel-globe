@@ -293,7 +293,7 @@ if (tripLocations.length > 0) {
     tripGlowMesh.setMatrixAt(i, dummy.matrix);
     tripGlowMesh.setColorAt(i, color);
 
-    tripDotPositions.push({ city: t.city, country: t.country, position: pos.clone(), index: i, region, isTrip: true });
+    tripDotPositions.push({ city: t.city, country: t.country, date: t.date, position: pos.clone(), index: i, region, isTrip: true });
   });
 
   tripDotMesh.instanceMatrix.needsUpdate = true;
@@ -458,8 +458,9 @@ function onMouseMove(event) {
     }
   });
 
-  // Check trip dots
+  // Check trip dots (skip ones hidden by the year filter)
   tripDotPositions.forEach(dp => {
+    if (dp.visible === false) return;
     const screenPos = dp.position.clone().project(camera);
     const sx = (screenPos.x * 0.5 + 0.5) * window.innerWidth;
     const sy = (-screenPos.y * 0.5 + 0.5) * window.innerHeight;
@@ -670,6 +671,32 @@ function updateVisibility() {
   arcObjects.forEach(arc => {
     arc.visible = visibleRouteKeys.has(arc.userData.key);
   });
+
+  // Update trip dots — hide ones that don't match the active year
+  if (tripDotMesh) {
+    tripLocations.forEach((t, i) => {
+      const matches = activeYear === 'all' || (t.date && t.date.startsWith(activeYear));
+      const region = getRegionByCountry(t.country, t.lat);
+      const color = matches ? new THREE.Color(REGIONS[region]?.color || '#7be3ff') : new THREE.Color(0x000000);
+      const scale = matches ? 1.0 : 0.001;
+      const pos = latLngToVector3(t.lat, t.lng, GLOBE_RADIUS + 0.003);
+      dummy.position.copy(pos);
+      dummy.scale.setScalar(scale);
+      dummy.updateMatrix();
+      tripDotMesh.setMatrixAt(i, dummy.matrix);
+      tripDotMesh.setColorAt(i, color);
+      if (tripGlowMesh) {
+        dummy.scale.setScalar(scale * 1.5);
+        dummy.updateMatrix();
+        tripGlowMesh.setMatrixAt(i, dummy.matrix);
+      }
+      // Mark hover/click hit-test data so hidden trips can't be selected
+      if (tripDotPositions[i]) tripDotPositions[i].visible = matches;
+    });
+    tripDotMesh.instanceMatrix.needsUpdate = true;
+    if (tripDotMesh.instanceColor) tripDotMesh.instanceColor.needsUpdate = true;
+    if (tripGlowMesh) tripGlowMesh.instanceMatrix.needsUpdate = true;
+  }
 
   // Update stats
   updateStats(filteredFlights);
