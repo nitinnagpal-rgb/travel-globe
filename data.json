@@ -2921,12 +2921,22 @@
     },
     {
       "date": "2008-05-25",
+      "city": "Bromolla",
+      "country": "Sweden",
+      "lat": 56.1167,
+      "lng": 14.55,
+      "mode": "Train",
+      "from": "Stockholm, Sweden",
+      "notes": ""
+    },
+    {
+      "date": "2008-05-25",
       "city": "Kristianstad",
       "country": "Sweden",
       "lat": 56.0294,
       "lng": 14.1567,
-      "mode": "Train",
-      "from": "Stockholm, Sweden",
+      "mode": "Car",
+      "from": "Bromolla, Sweden",
       "notes": ""
     }
   ]
