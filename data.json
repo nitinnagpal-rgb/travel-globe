@@ -437,6 +437,18 @@
       "lng": 8.549,
       "city": "Zurich",
       "country": "Switzerland"
+    },
+    "DXB": {
+      "lat": 25.2048,
+      "lng": 55.2708,
+      "city": "Dubai",
+      "country": ""
+    },
+    "PDX": {
+      "lat": 45.5051,
+      "lng": -122.675,
+      "city": "Portland",
+      "country": "United States"
     }
   },
   "flights": [
@@ -2926,18 +2938,46 @@
       "dist": 2442
     },
     {
-      "date": "2026-01-13",
+      "date": "2025-12-17",
       "from": "SFO",
       "to": "EWR",
       "airline": "United Airlines",
       "dist": 2559
     },
     {
-      "date": "2026-01-16",
+      "date": "2025-12-17",
       "from": "EWR",
+      "to": "DEL",
+      "airline": "United Airlines",
+      "dist": 7310
+    },
+    {
+      "date": "2025-12-30",
+      "from": "BOM",
+      "to": "DXB",
+      "airline": "Emirates",
+      "dist": 1201
+    },
+    {
+      "date": "2025-12-30",
+      "from": "DXB",
+      "to": "SFO",
+      "airline": "Emirates",
+      "dist": 8093
+    },
+    {
+      "date": "2025-12-09",
+      "from": "SFO",
+      "to": "PDX",
+      "airline": "United Airlines",
+      "dist": 545
+    },
+    {
+      "date": "2025-12-10",
+      "from": "PDX",
       "to": "SFO",
       "airline": "United Airlines",
-      "dist": 2559
+      "dist": 545
     }
   ],
   "trips": [
