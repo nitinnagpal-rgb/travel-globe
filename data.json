@@ -449,6 +449,12 @@
       "lng": -122.675,
       "city": "Portland",
       "country": "United States"
+    },
+    "GVA": {
+      "lat": 46.2018,
+      "lng": 6.1466,
+      "city": "Geneva",
+      "country": "Switzerland"
     }
   },
   "flights": [
@@ -2978,6 +2984,41 @@
       "to": "SFO",
       "airline": "United Airlines",
       "dist": 545
+    },
+    {
+      "date": "2025-11-16",
+      "from": "SFO",
+      "to": "EWR",
+      "airline": "United Airlines",
+      "dist": 2559
+    },
+    {
+      "date": "2025-11-16",
+      "from": "EWR",
+      "to": "GVA",
+      "airline": "United Airlines",
+      "dist": 3871
+    },
+    {
+      "date": "2025-11-18",
+      "from": "GVA",
+      "to": "BRU",
+      "airline": "Swiss Airlines",
+      "dist": 333
+    },
+    {
+      "date": "2025-11-21",
+      "from": "BRU",
+      "to": "CDG",
+      "airline": "United Airlines",
+      "dist": 156
+    },
+    {
+      "date": "2025-11-21",
+      "from": "CDG",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 5569
     }
   ],
   "trips": [
