@@ -2896,6 +2896,34 @@
       "to": "AKL",
       "airline": "United Airlines",
       "dist": 6526
+    },
+    {
+      "date": "2026-03-29",
+      "from": "SFO",
+      "to": "IAD",
+      "airline": "United Airlines",
+      "dist": 2413
+    },
+    {
+      "date": "2026-03-31",
+      "from": "IAD",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 2413
+    },
+    {
+      "date": "2026-03-08",
+      "from": "SFO",
+      "to": "MCO",
+      "airline": "United Airlines",
+      "dist": 2442
+    },
+    {
+      "date": "2026-03-11",
+      "from": "MCO",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 2442
     }
   ],
   "trips": [
