@@ -2924,6 +2924,20 @@
       "to": "SFO",
       "airline": "United Airlines",
       "dist": 2442
+    },
+    {
+      "date": "2026-01-13",
+      "from": "SFO",
+      "to": "EWR",
+      "airline": "United Airlines",
+      "dist": 2559
+    },
+    {
+      "date": "2026-01-16",
+      "from": "EWR",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 2559
     }
   ],
   "trips": [
