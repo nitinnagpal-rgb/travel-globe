@@ -455,6 +455,12 @@
       "lng": 6.1466,
       "city": "Geneva",
       "country": "Switzerland"
+    },
+    "NRT": {
+      "lat": 35.6762,
+      "lng": 139.6503,
+      "city": "Tokyo",
+      "country": "Japan"
     }
   },
   "flights": [
@@ -3019,6 +3025,20 @@
       "to": "SFO",
       "airline": "United Airlines",
       "dist": 5569
+    },
+    {
+      "date": "2012-07-08",
+      "from": "SFO",
+      "to": "NRT",
+      "airline": "United Airlines",
+      "dist": 5149
+    },
+    {
+      "date": "2012-07-22",
+      "from": "NRT",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 5149
     }
   ],
   "trips": [
@@ -3060,6 +3080,26 @@
       "lng": 14.1567,
       "mode": "Car",
       "from": "Bromolla, Sweden",
+      "notes": ""
+    },
+    {
+      "date": "2012-07-11",
+      "city": "Kyoto",
+      "country": "Japan",
+      "lat": 35.0116,
+      "lng": 135.7681,
+      "mode": "Train",
+      "from": "Tokyo, Japan",
+      "notes": ""
+    },
+    {
+      "date": "2012-07-16",
+      "city": "Tokyo",
+      "country": "Japan",
+      "lat": 35.6762,
+      "lng": 139.6503,
+      "mode": "Train",
+      "from": "Kyoto, Japan",
       "notes": ""
     }
   ]
