@@ -10,11 +10,39 @@ async function loadData() {
   return response.json();
 }
 
+// ===========================
+// SETTINGS APPLICATION
+// ===========================
+
+const DEFAULT_SETTINGS = {
+  headerText: '',
+  subtitle: '',
+  fontDisplay: "'Space Grotesk', 'Inter', sans-serif",
+  fontBody: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+  globeColor: '#0a0e1a',
+  atmosColor: '#264d80',
+  bgColor: '#06070d',
+  textColor: '#ffffff',
+};
+
+function parseHexColor(hex) {
+  if (!hex || typeof hex !== 'string') return null;
+  const m = hex.trim().match(/^#?([0-9a-f]{6})$/i);
+  if (!m) return null;
+  return parseInt(m[1], 16);
+}
+function hexToVec3(hex) {
+  const n = parseHexColor(hex);
+  if (n === null) return null;
+  return [((n >> 16) & 0xff) / 255, ((n >> 8) & 0xff) / 255, (n & 0xff) / 255];
+}
+
 (async function init() {
   const DATA = await loadData();
   const AIRPORTS = DATA.airports;
   const FLIGHTS = DATA.flights;
   const TRIPS = DATA.trips || [];
+  const SETTINGS = Object.assign({}, DEFAULT_SETTINGS, DATA.settings || {});
 
 // Region classification
 function getRegion(code) {
@@ -92,7 +120,7 @@ camera.position.set(0, 0, 3.2);
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-renderer.setClearColor(0x06070d);
+renderer.setClearColor(parseHexColor(SETTINGS.bgColor) ?? 0x06070d);
 
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
@@ -127,7 +155,7 @@ scene.add(new THREE.Points(starGeom, new THREE.PointsMaterial({ color: 0x555577,
 // Globe sphere — dark with grid
 const globeGeom = new THREE.SphereGeometry(GLOBE_RADIUS, 64, 64);
 const globeMat = new THREE.MeshBasicMaterial({
-  color: 0x0a0e1a,
+  color: parseHexColor(SETTINGS.globeColor) ?? 0x0a0e1a,
   transparent: true,
   opacity: 0.95,
 });
@@ -171,7 +199,11 @@ scene.add(gridGroup);
 
 // Atmosphere glow
 const atmosGeom = new THREE.SphereGeometry(GLOBE_RADIUS * 1.15, 64, 64);
+const atmosVec = hexToVec3(SETTINGS.atmosColor) || [0.15, 0.3, 0.5];
 const atmosMat = new THREE.ShaderMaterial({
+  uniforms: {
+    uColor: { value: new THREE.Vector3(atmosVec[0], atmosVec[1], atmosVec[2]) },
+  },
   vertexShader: `
     varying vec3 vNormal;
     void main() {
@@ -180,10 +212,11 @@ const atmosMat = new THREE.ShaderMaterial({
     }
   `,
   fragmentShader: `
+    uniform vec3 uColor;
     varying vec3 vNormal;
     void main() {
       float intensity = pow(0.65 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0);
-      gl_FragColor = vec4(0.15, 0.3, 0.5, 1.0) * intensity * 0.6;
+      gl_FragColor = vec4(uColor, 1.0) * intensity * 0.6;
     }
   `,
   blending: THREE.AdditiveBlending,
@@ -191,6 +224,36 @@ const atmosMat = new THREE.ShaderMaterial({
   transparent: true,
 });
 scene.add(new THREE.Mesh(atmosGeom, atmosMat));
+
+// Apply visual settings to DOM (header text, fonts, colors)
+function applyDomSettings() {
+  const root = document.documentElement.style;
+  root.setProperty('--color-globe-text', SETTINGS.textColor);
+  root.setProperty('--color-globe-bg', SETTINGS.bgColor);
+  root.setProperty('--font-body', SETTINGS.fontBody);
+  root.setProperty('--font-display', SETTINGS.fontDisplay);
+
+  const titleBlock = document.getElementById('globe-title-block');
+  const titleEl = document.getElementById('globe-title');
+  const subtitleEl = document.getElementById('globe-subtitle');
+  const hasTitle = (SETTINGS.headerText && SETTINGS.headerText.trim()) ||
+                   (SETTINGS.subtitle && SETTINGS.subtitle.trim());
+  if (titleEl) titleEl.textContent = SETTINGS.headerText || '';
+  if (subtitleEl) {
+    subtitleEl.textContent = SETTINGS.subtitle || '';
+    subtitleEl.style.display = SETTINGS.subtitle ? '' : 'none';
+  }
+  if (titleBlock) {
+    if (hasTitle) {
+      titleBlock.removeAttribute('hidden');
+      document.body.classList.add('has-globe-title');
+    } else {
+      titleBlock.setAttribute('hidden', '');
+      document.body.classList.remove('has-globe-title');
+    }
+  }
+}
+applyDomSettings();
 
 // ===========================
 // HELPER: lat/lng to 3D

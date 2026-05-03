@@ -21,7 +21,7 @@
 <title>Nitin's Travels</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Lora:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./style.css">
 
 <!-- Admin Panel Styles (scoped to #admin-view) -->
@@ -411,8 +411,139 @@
 /* ===================== ADMIN TABLE ===================== */
 #admin-view .table-container {
   overflow-x: auto;
-   overflow-y: auto;
+  overflow-y: auto;
+  /* Cap height so the body scrolls while header stays fixed */
+  max-height: calc(100vh - 320px);
   padding: 0 24px 24px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-hover) transparent;
+}
+
+#admin-view .table-container::-webkit-scrollbar { width: 8px; height: 8px; }
+#admin-view .table-container::-webkit-scrollbar-track { background: transparent; }
+#admin-view .table-container::-webkit-scrollbar-thumb {
+  background: var(--color-border-hover);
+  border-radius: 4px;
+}
+#admin-view .table-container::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+
+@media (max-height: 800px) {
+  #admin-view .table-container { max-height: calc(100vh - 280px); }
+}
+
+/* ===================== ADMIN SETTINGS PANEL ===================== */
+#admin-view .settings-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 8px 24px 32px;
+  max-height: calc(100vh - 320px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-hover) transparent;
+}
+#admin-view .settings-wrap::-webkit-scrollbar { width: 8px; }
+#admin-view .settings-wrap::-webkit-scrollbar-track { background: transparent; }
+#admin-view .settings-wrap::-webkit-scrollbar-thumb {
+  background: var(--color-border-hover);
+  border-radius: 4px;
+}
+
+#admin-view .settings-intro {
+  margin-bottom: 24px;
+}
+#admin-view .settings-intro h2 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+#admin-view .settings-intro p {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+#admin-view .settings-section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+#admin-view .settings-section h3 {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text);
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+#admin-view .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 600px) {
+  #admin-view .form-row { grid-template-columns: 1fr; }
+}
+
+#admin-view .color-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 24px;
+}
+@media (max-width: 600px) {
+  #admin-view .color-grid { grid-template-columns: 1fr; }
+}
+
+#admin-view .color-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+#admin-view .color-row label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+#admin-view .color-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+#admin-view .color-swatch {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  width: 44px;
+  height: 36px;
+  padding: 2px;
+  background: var(--color-surface-2);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+#admin-view .color-swatch::-webkit-color-swatch-wrapper { padding: 0; border: 0; }
+#admin-view .color-swatch::-webkit-color-swatch { border: 0; border-radius: 4px; }
+#admin-view .color-hex {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  text-transform: lowercase;
+}
+
+#admin-view .settings-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+  padding-top: 8px;
 }
 
 #admin-view table {
@@ -918,6 +1049,12 @@
 <!-- GLOBE VIEW -->
 <!-- ============================================================ -->
 <div id="globe-view">
+  <!-- Title Block (set from admin Settings) -->
+  <div class="globe-title-block" id="globe-title-block" hidden>
+    <h1 class="globe-title" id="globe-title"></h1>
+    <p class="globe-subtitle" id="globe-subtitle"></p>
+  </div>
+
   <!-- Stats Bar -->
   <header class="stats-bar">
     <div class="stats-inner">
@@ -1049,6 +1186,7 @@
       <button class="tab active" data-tab="flights">Flights</button>
       <button class="tab" data-tab="airports">Airports</button>
       <button class="tab" data-tab="trips">Trips</button>
+      <button class="tab" data-tab="settings">Settings</button>
     </div>
 
     <!-- FLIGHTS PANEL -->
@@ -1151,6 +1289,81 @@
         </table>
       </div>
       <div class="pagination" id="trips-pagination"></div>
+    </div>
+
+    <!-- SETTINGS PANEL -->
+    <div id="panel-settings" class="hidden">
+      <div class="settings-wrap">
+        <div class="settings-intro">
+          <h2>Globe View Customisation</h2>
+          <p>Customise the public globe view — header text, fonts, and colors. Click <strong>Save Settings</strong>, then publish to GitHub for the live site to update.</p>
+        </div>
+
+        <div class="settings-section">
+          <h3>Header</h3>
+          <div class="form-group">
+            <label>Title</label>
+            <input type="text" class="form-input" id="settings-header-text" placeholder="e.g. Nitin's Travels" maxlength="80">
+          </div>
+          <div class="form-group">
+            <label>Subtitle <span style="color:var(--color-text-muted);font-weight:400;">(optional)</span></label>
+            <input type="text" class="form-input" id="settings-subtitle" placeholder="e.g. A decade of journeys" maxlength="120">
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Typography</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Display font (titles)</label>
+              <select class="form-input" id="settings-font-display"></select>
+            </div>
+            <div class="form-group">
+              <label>Body font</label>
+              <select class="form-input" id="settings-font-body"></select>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Colors</h3>
+          <div class="color-grid">
+            <div class="color-row">
+              <label>Text color</label>
+              <div class="color-controls">
+                <input type="color" id="settings-text-color" class="color-swatch">
+                <input type="text" id="settings-text-color-hex" class="form-input color-hex" maxlength="7">
+              </div>
+            </div>
+            <div class="color-row">
+              <label>Globe base</label>
+              <div class="color-controls">
+                <input type="color" id="settings-globe-color" class="color-swatch">
+                <input type="text" id="settings-globe-color-hex" class="form-input color-hex" maxlength="7">
+              </div>
+            </div>
+            <div class="color-row">
+              <label>Atmosphere glow</label>
+              <div class="color-controls">
+                <input type="color" id="settings-atmos-color" class="color-swatch">
+                <input type="text" id="settings-atmos-color-hex" class="form-input color-hex" maxlength="7">
+              </div>
+            </div>
+            <div class="color-row">
+              <label>Background (space)</label>
+              <div class="color-controls">
+                <input type="color" id="settings-bg-color" class="color-swatch">
+                <input type="text" id="settings-bg-color-hex" class="form-input color-hex" maxlength="7">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-actions">
+          <button class="btn" id="btn-settings-reset">Restore defaults</button>
+          <button class="btn btn-primary" id="btn-settings-save">Save Settings</button>
+        </div>
+      </div>
     </div>
 
     <footer class="admin-footer">
@@ -1572,7 +1785,135 @@ window.initAdmin = function() {
         $('#panel-flights').classList.toggle('hidden', currentTab !== 'flights');
         $('#panel-airports').classList.toggle('hidden', currentTab !== 'airports');
         $('#panel-trips').classList.toggle('hidden', currentTab !== 'trips');
+        $('#panel-settings').classList.toggle('hidden', currentTab !== 'settings');
+        if (currentTab === 'settings') loadSettingsForm();
       });
+    });
+  }
+
+  // ===================== SETTINGS =====================
+  var SETTINGS_DEFAULTS = {
+    headerText: '',
+    subtitle: '',
+    fontDisplay: "'Space Grotesk', 'Inter', sans-serif",
+    fontBody: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+    globeColor: '#0a0e1a',
+    atmosColor: '#264d80',
+    bgColor: '#06070d',
+    textColor: '#ffffff',
+  };
+  var FONT_CHOICES = [
+    { label: 'Inter', value: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif" },
+    { label: 'Space Grotesk', value: "'Space Grotesk', 'Inter', sans-serif" },
+    { label: 'Playfair Display', value: "'Playfair Display', Georgia, serif" },
+    { label: 'Cormorant Garamond', value: "'Cormorant Garamond', Georgia, serif" },
+    { label: 'Bebas Neue', value: "'Bebas Neue', 'Inter', sans-serif" },
+    { label: 'Montserrat', value: "'Montserrat', 'Inter', sans-serif" },
+    { label: 'Lora', value: "'Lora', Georgia, serif" },
+    { label: 'JetBrains Mono', value: "'JetBrains Mono', ui-monospace, monospace" },
+  ];
+
+  function ensureSettings() {
+    if (!data.settings) data.settings = {};
+    Object.keys(SETTINGS_DEFAULTS).forEach(function(k) {
+      if (data.settings[k] === undefined || data.settings[k] === null) {
+        data.settings[k] = SETTINGS_DEFAULTS[k];
+      }
+    });
+  }
+
+  function populateFontSelect(selectEl, currentValue) {
+    selectEl.innerHTML = '';
+    var matched = false;
+    FONT_CHOICES.forEach(function(f) {
+      var opt = document.createElement('option');
+      opt.value = f.value;
+      opt.textContent = f.label;
+      opt.style.fontFamily = f.value;
+      if (f.value === currentValue) { opt.selected = true; matched = true; }
+      selectEl.appendChild(opt);
+    });
+    if (!matched && currentValue) {
+      // Add a custom option for unknown values
+      var custom = document.createElement('option');
+      custom.value = currentValue;
+      custom.textContent = 'Custom';
+      custom.selected = true;
+      selectEl.appendChild(custom);
+    }
+  }
+
+  function loadSettingsForm() {
+    ensureSettings();
+    var s = data.settings;
+    $('#settings-header-text').value = s.headerText || '';
+    $('#settings-subtitle').value = s.subtitle || '';
+    populateFontSelect($('#settings-font-display'), s.fontDisplay);
+    populateFontSelect($('#settings-font-body'), s.fontBody);
+    setColorPair('text', s.textColor);
+    setColorPair('globe', s.globeColor);
+    setColorPair('atmos', s.atmosColor);
+    setColorPair('bg', s.bgColor);
+  }
+
+  function setColorPair(name, value) {
+    var hex = (value || '').toLowerCase();
+    if (!/^#[0-9a-f]{6}$/i.test(hex)) hex = '#000000';
+    var picker = $('#settings-' + name + '-color');
+    var text = $('#settings-' + name + '-color-hex');
+    if (picker) picker.value = hex;
+    if (text) text.value = hex;
+  }
+
+  function bindColorPair(name) {
+    var picker = $('#settings-' + name + '-color');
+    var text = $('#settings-' + name + '-color-hex');
+    if (!picker || !text) return;
+    picker.addEventListener('input', function() {
+      text.value = picker.value.toLowerCase();
+    });
+    text.addEventListener('input', function() {
+      var v = text.value.trim();
+      if (!v.startsWith('#')) v = '#' + v;
+      if (/^#[0-9a-f]{6}$/i.test(v)) picker.value = v.toLowerCase();
+    });
+  }
+
+  function saveSettingsFromForm() {
+    ensureSettings();
+    function readHex(name, fallback) {
+      var v = ($('#settings-' + name + '-color-hex').value || '').trim().toLowerCase();
+      if (!v.startsWith('#')) v = '#' + v;
+      return /^#[0-9a-f]{6}$/i.test(v) ? v : fallback;
+    }
+    data.settings.headerText = $('#settings-header-text').value.trim();
+    data.settings.subtitle = $('#settings-subtitle').value.trim();
+    data.settings.fontDisplay = $('#settings-font-display').value || SETTINGS_DEFAULTS.fontDisplay;
+    data.settings.fontBody = $('#settings-font-body').value || SETTINGS_DEFAULTS.fontBody;
+    data.settings.textColor = readHex('text', SETTINGS_DEFAULTS.textColor);
+    data.settings.globeColor = readHex('globe', SETTINGS_DEFAULTS.globeColor);
+    data.settings.atmosColor = readHex('atmos', SETTINGS_DEFAULTS.atmosColor);
+    data.settings.bgColor = readHex('bg', SETTINGS_DEFAULTS.bgColor);
+    showToast('Settings saved — click Publish to update the live globe');
+  }
+
+  function initSettingsEvents() {
+    bindColorPair('text');
+    bindColorPair('globe');
+    bindColorPair('atmos');
+    bindColorPair('bg');
+    $('#btn-settings-save').addEventListener('click', saveSettingsFromForm);
+    $('#btn-settings-reset').addEventListener('click', function() {
+      showConfirm(
+        'Restore default appearance?',
+        'Header text, fonts and colors will be reset to defaults. Existing flights, airports and trips are not affected.',
+        'Restore',
+        function() {
+          data.settings = Object.assign({}, SETTINGS_DEFAULTS);
+          loadSettingsForm();
+          showToast('Defaults restored — remember to Save and Publish');
+        }
+      );
     });
   }
 
@@ -2440,15 +2781,18 @@ window.initAdmin = function() {
 
   // RENDER ALL
   function renderAll() {
+    ensureSettings();
     renderStats();
     renderFlightsTable();
     renderAirportsTable();
     renderTripsTable();
+    if (currentTab === 'settings') loadSettingsForm();
   }
 
   // EVENTS
   function initEvents() {
     initTabs();
+    initSettingsEvents();
 
     $('#flight-search').addEventListener('input', function(e) {
       flightSearch = e.target.value;
