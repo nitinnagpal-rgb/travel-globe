@@ -3121,6 +3121,16 @@
       "mode": "Train",
       "from": "Kyoto, Japan",
       "notes": ""
+    },
+    {
+      "date": "2003-01-09",
+      "city": "Incheon",
+      "country": "South Korea",
+      "lat": 37.456,
+      "lng": 126.7052,
+      "mode": "Bus",
+      "from": "Incheon, South Korea",
+      "notes": ""
     }
   ]
 }
