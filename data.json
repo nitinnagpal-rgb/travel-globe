@@ -461,6 +461,12 @@
       "lng": 139.6503,
       "city": "Tokyo",
       "country": "Japan"
+    },
+    "ICN": {
+      "lat": 37.5665,
+      "lng": 126.978,
+      "city": "Seoul",
+      "country": "South Korea"
     }
   },
   "flights": [
@@ -3039,6 +3045,20 @@
       "to": "SFO",
       "airline": "United Airlines",
       "dist": 5149
+    },
+    {
+      "date": "2003-01-08",
+      "from": "DEL",
+      "to": "ICN",
+      "airline": "Asiana Airlines",
+      "dist": 2920
+    },
+    {
+      "date": "2003-01-09",
+      "from": "ICN",
+      "to": "SFO",
+      "airline": "Asiana Airlines",
+      "dist": 5619
     }
   ],
   "trips": [
