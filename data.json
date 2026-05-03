@@ -3201,6 +3201,16 @@
       "mode": "Boat",
       "from": "",
       "notes": "Antarctica Expedition"
+    },
+    {
+      "date": "2023-02-23",
+      "city": "King George Island",
+      "country": "Antarctica",
+      "lat": -62.0833,
+      "lng": -58.3833,
+      "mode": "Boat",
+      "from": "",
+      "notes": "Antarctica Expedition"
     }
   ],
   "settings": {
