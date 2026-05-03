@@ -3131,6 +3131,76 @@
       "mode": "Bus",
       "from": "Incheon, South Korea",
       "notes": ""
+    },
+    {
+      "date": "2023-02-19",
+      "city": "South Shetland Islands",
+      "country": "Antarctica",
+      "lat": -62,
+      "lng": -58,
+      "mode": "Boat",
+      "from": "Ushuaia",
+      "notes": "Antarctica Expedition"
+    },
+    {
+      "date": "2023-02-20",
+      "city": "Deception Island",
+      "country": "Antarctica",
+      "lat": -62.9667,
+      "lng": -60.6333,
+      "mode": "Boat",
+      "from": "",
+      "notes": "Antarctica Expedition"
+    },
+    {
+      "date": "2023-02-20",
+      "city": "Port Lockroy",
+      "country": "Antarctica",
+      "lat": -64.8253,
+      "lng": -63.4946,
+      "mode": "Boat",
+      "from": "",
+      "notes": "Antarctica Expedition"
+    },
+    {
+      "date": "2023-02-21",
+      "city": "Lemaire Channel",
+      "country": "Antarctica",
+      "lat": -65.1011,
+      "lng": -63.9819,
+      "mode": "Boat",
+      "from": "",
+      "notes": ""
+    },
+    {
+      "date": "2023-02-21",
+      "city": "Petermann Island",
+      "country": "Antarctica",
+      "lat": -65.1667,
+      "lng": -64.15,
+      "mode": "Boat",
+      "from": "",
+      "notes": "Antarctica Expedition"
+    },
+    {
+      "date": "2023-02-22",
+      "city": "Livingston Island",
+      "country": "Antarctica",
+      "lat": -62.6,
+      "lng": -60.5,
+      "mode": "Boat",
+      "from": "",
+      "notes": "Antarctica Expedition"
+    },
+    {
+      "date": "2023-02-22",
+      "city": "Paulet Island",
+      "country": "Antarctica",
+      "lat": -63.5833,
+      "lng": -55.7833,
+      "mode": "Boat",
+      "from": "",
+      "notes": "Antarctica Expedition"
     }
   ],
   "settings": {
