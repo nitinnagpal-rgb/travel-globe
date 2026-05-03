@@ -3027,14 +3027,14 @@
       "dist": 5569
     },
     {
-      "date": "2012-07-08",
+      "date": "2012-07-06",
       "from": "SFO",
       "to": "NRT",
       "airline": "United Airlines",
       "dist": 5149
     },
     {
-      "date": "2012-07-22",
+      "date": "2012-07-21",
       "from": "NRT",
       "to": "SFO",
       "airline": "United Airlines",
@@ -3083,7 +3083,7 @@
       "notes": ""
     },
     {
-      "date": "2012-07-11",
+      "date": "2012-07-13",
       "city": "Kyoto",
       "country": "Japan",
       "lat": 35.0116,
