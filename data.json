@@ -3132,5 +3132,15 @@
       "from": "Incheon, South Korea",
       "notes": ""
     }
-  ]
+  ],
+  "settings": {
+    "headerText": "Nitin's Travles",
+    "subtitle": "",
+    "fontDisplay": "'Playfair Display', Georgia, serif",
+    "fontBody": "'Bebas Neue', 'Inter', sans-serif",
+    "globeColor": "#087099",
+    "atmosColor": "#0092cc",
+    "bgColor": "#06070d",
+    "textColor": "#ffffff"
+  }
 }
