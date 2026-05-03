@@ -256,6 +256,214 @@ function applyDomSettings() {
 applyDomSettings();
 
 // ===========================
+// COUNTRY LABELS
+// ===========================
+
+// Fixed centroids for major reference countries (so the globe looks anchored
+// even before the user adds data). Visited countries from data still get
+// added on top with a centroid computed from their actual airports/trips.
+const COUNTRY_CENTROIDS = {
+  'USA': { lat: 39.5, lng: -98.35 },
+  'United States': { lat: 39.5, lng: -98.35 },
+  'Canada': { lat: 56.1, lng: -106.3 },
+  'Mexico': { lat: 23.6, lng: -102.5 },
+  'Brazil': { lat: -10.0, lng: -52.0 },
+  'Argentina': { lat: -38.4, lng: -63.6 },
+  'Peru': { lat: -9.2, lng: -75.0 },
+  'Chile': { lat: -35.7, lng: -71.5 },
+  'Colombia': { lat: 4.6, lng: -74.3 },
+  'Panama': { lat: 8.5, lng: -80.8 },
+  'UK': { lat: 54.0, lng: -2.5 },
+  'United Kingdom': { lat: 54.0, lng: -2.5 },
+  'Ireland': { lat: 53.4, lng: -8.2 },
+  'France': { lat: 46.6, lng: 2.2 },
+  'Spain': { lat: 40.4, lng: -3.7 },
+  'Portugal': { lat: 39.4, lng: -8.2 },
+  'Italy': { lat: 41.9, lng: 12.5 },
+  'Germany': { lat: 51.2, lng: 10.5 },
+  'Belgium': { lat: 50.5, lng: 4.5 },
+  'Netherlands': { lat: 52.1, lng: 5.3 },
+  'Switzerland': { lat: 46.8, lng: 8.2 },
+  'Austria': { lat: 47.5, lng: 14.5 },
+  'Slovakia': { lat: 48.7, lng: 19.7 },
+  'Czech Republic': { lat: 49.8, lng: 15.5 },
+  'Poland': { lat: 51.9, lng: 19.1 },
+  'Denmark': { lat: 56.3, lng: 9.5 },
+  'Sweden': { lat: 60.1, lng: 18.6 },
+  'Norway': { lat: 64.5, lng: 11.5 },
+  'Finland': { lat: 64.0, lng: 26.0 },
+  'Iceland': { lat: 64.9, lng: -19.0 },
+  'Russia': { lat: 61.5, lng: 90.0 },
+  'Greece': { lat: 39.1, lng: 21.8 },
+  'Turkey': { lat: 39.0, lng: 35.2 },
+  'Egypt': { lat: 26.8, lng: 30.8 },
+  'Morocco': { lat: 31.8, lng: -7.1 },
+  'South Africa': { lat: -30.6, lng: 22.9 },
+  'Kenya': { lat: -0.0, lng: 37.9 },
+  'Nigeria': { lat: 9.1, lng: 8.7 },
+  'India': { lat: 22.6, lng: 79.0 },
+  'China': { lat: 35.9, lng: 104.2 },
+  'Japan': { lat: 36.2, lng: 138.3 },
+  'South Korea': { lat: 36.0, lng: 127.8 },
+  'Thailand': { lat: 15.9, lng: 100.99 },
+  'Vietnam': { lat: 14.1, lng: 108.3 },
+  'Indonesia': { lat: -2.5, lng: 118.0 },
+  'Philippines': { lat: 12.9, lng: 121.8 },
+  'Singapore': { lat: 1.4, lng: 103.8 },
+  'Malaysia': { lat: 4.2, lng: 101.98 },
+  'Australia': { lat: -25.3, lng: 133.8 },
+  'New Zealand': { lat: -41.0, lng: 173.0 },
+  'UAE': { lat: 23.4, lng: 53.85 },
+  'Saudi Arabia': { lat: 24.0, lng: 45.0 },
+  'Israel': { lat: 31.0, lng: 34.85 },
+  'Antarctica': { lat: -82.0, lng: 35.0 },
+};
+
+// Normalise common country aliases so we don't end up with duplicate labels
+// when the data uses different spellings (e.g. "USA" and "United States").
+const COUNTRY_ALIASES = {
+  'united states': 'USA',
+  'united states of america': 'USA',
+  'usa': 'USA',
+  'u.s.a.': 'USA',
+  'u.s.': 'USA',
+  'america': 'USA',
+  'united kingdom': 'UK',
+  'uk': 'UK',
+  'great britain': 'UK',
+  'england': 'UK',
+};
+function normaliseCountry(name) {
+  if (!name) return name;
+  const k = name.trim().toLowerCase();
+  return COUNTRY_ALIASES[k] || name.trim();
+}
+
+// Build the working list of country labels. Visited countries override
+// the static centroid with the average of their actual data points so
+// labels sit on the user's actual region of activity.
+function buildCountryLabels() {
+  const acc = {}; // name -> { lat, lng, count }
+  Object.values(AIRPORTS).forEach(a => {
+    if (!a.country) return;
+    const k = normaliseCountry(a.country);
+    if (!acc[k]) acc[k] = { lat: 0, lng: 0, count: 0 };
+    acc[k].lat += a.lat;
+    acc[k].lng += a.lng;
+    acc[k].count += 1;
+  });
+  TRIPS.forEach(t => {
+    if (!t.country || t.lat == null || t.lng == null) return;
+    const k = normaliseCountry(t.country);
+    if (!acc[k]) acc[k] = { lat: 0, lng: 0, count: 0 };
+    acc[k].lat += t.lat;
+    acc[k].lng += t.lng;
+    acc[k].count += 1;
+  });
+
+  const labels = [];
+  const seen = new Set();
+
+  // Visited countries first — use averaged centroid
+  Object.entries(acc).forEach(([name, v]) => {
+    labels.push({
+      name,
+      lat: v.lat / v.count,
+      lng: v.lng / v.count,
+      visited: true,
+    });
+    seen.add(name.toLowerCase());
+  });
+
+  // Reference countries (not yet visited) for context when zoomed in
+  Object.entries(COUNTRY_CENTROIDS).forEach(([name, p]) => {
+    const canonical = normaliseCountry(name);
+    if (seen.has(canonical.toLowerCase())) return;
+    labels.push({ name: canonical, lat: p.lat, lng: p.lng, visited: false });
+    seen.add(canonical.toLowerCase());
+  });
+
+  return labels;
+}
+
+const countryLabels = buildCountryLabels().map(c => {
+  const el = document.createElement('div');
+  el.className = 'country-label';
+  el.textContent = c.name;
+  el.style.opacity = '0';
+  return { ...c, el, position: null };
+});
+
+const labelsContainer = document.getElementById('country-labels');
+if (labelsContainer) {
+  countryLabels.forEach(l => labelsContainer.appendChild(l.el));
+}
+
+// Per-frame: project each label, fade in when zoomed close, hide on far side.
+// Camera distance ranges roughly 1.5 (very close) to 6 (far). Labels appear
+// when the camera is closer than about 2.6, fully visible at 1.8 and below.
+function updateCountryLabels() {
+  if (!labelsContainer || countryLabels.length === 0) return;
+  // Lazy-init 3D positions on first call (latLngToVector3 is defined below)
+  if (!countryLabels[0].position) {
+    countryLabels.forEach(l => {
+      l.position = latLngToVector3(l.lat, l.lng, GLOBE_RADIUS + 0.01);
+    });
+  }
+  const camDist = camera.position.length();
+  // Master zoom factor (0 = hidden, 1 = fully visible)
+  const ZOOM_NEAR = 1.8, ZOOM_FAR = 2.6;
+  let zoomFactor = (ZOOM_FAR - camDist) / (ZOOM_FAR - ZOOM_NEAR);
+  zoomFactor = Math.max(0, Math.min(1, zoomFactor));
+
+  if (zoomFactor === 0) {
+    // Hide everything in one cheap pass
+    countryLabels.forEach(l => {
+      if (l.el.style.opacity !== '0') l.el.style.opacity = '0';
+    });
+    return;
+  }
+
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  const camDir = camera.position.clone().normalize();
+  const tmp = new THREE.Vector3();
+
+  countryLabels.forEach(l => {
+    // Hide if on the far side of the globe
+    const labelDir = l.position.clone().normalize();
+    const facing = labelDir.dot(camDir); // 1 = directly facing camera
+    if (facing < 0.05) {
+      if (l.el.style.opacity !== '0') l.el.style.opacity = '0';
+      return;
+    }
+
+    // Project to screen
+    tmp.copy(l.position).project(camera);
+    if (tmp.z > 1) {
+      if (l.el.style.opacity !== '0') l.el.style.opacity = '0';
+      return;
+    }
+    const sx = (tmp.x * 0.5 + 0.5) * w;
+    const sy = (-tmp.y * 0.5 + 0.5) * h;
+
+    // Fade based on zoom and edge proximity (facing 0.05..0.4 is the rim)
+    const edgeFade = Math.max(0, Math.min(1, (facing - 0.05) / 0.35));
+    const baseOpacity = l.visited ? 0.92 : 0.55;
+    const opacity = zoomFactor * edgeFade * baseOpacity;
+
+    if (opacity < 0.04) {
+      if (l.el.style.opacity !== '0') l.el.style.opacity = '0';
+      return;
+    }
+
+    // Offset upward by 14px so the label sits just above the dot at this point
+    l.el.style.transform = `translate(-50%, -100%) translate(${sx.toFixed(1)}px, ${(sy - 6).toFixed(1)}px)`;
+    l.el.style.opacity = opacity.toFixed(2);
+  });
+}
+
+// ===========================
 // HELPER: lat/lng to 3D
 // ===========================
 
@@ -861,6 +1069,7 @@ function animate() {
   const pulse = 0.3 + Math.sin(performance.now() * 0.002) * 0.1;
   glowMat.opacity = pulse;
 
+  updateCountryLabels();
   renderer.render(scene, camera);
 }
 
