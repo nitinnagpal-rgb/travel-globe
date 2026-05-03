@@ -3134,12 +3134,12 @@
     }
   ],
   "settings": {
-    "headerText": "Nitin's Travles",
+    "headerText": "Nitin's Travels",
     "subtitle": "",
-    "fontDisplay": "'Playfair Display', Georgia, serif",
-    "fontBody": "'Bebas Neue', 'Inter', sans-serif",
-    "globeColor": "#087099",
-    "atmosColor": "#0092cc",
+    "fontDisplay": "'Space Grotesk', 'Inter', sans-serif",
+    "fontBody": "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+    "globeColor": "#0a0e1a",
+    "atmosColor": "#264d80",
     "bgColor": "#06070d",
     "textColor": "#ffffff"
   }
