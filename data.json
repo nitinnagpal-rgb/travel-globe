@@ -3211,6 +3211,26 @@
       "mode": "Boat",
       "from": "",
       "notes": "Antarctica Expedition"
+    },
+    {
+      "date": "1994-06-10",
+      "city": "Kathmandu",
+      "country": "Nepal",
+      "lat": 27.7083,
+      "lng": 85.3206,
+      "mode": "Bus",
+      "from": "Patna, India",
+      "notes": ""
+    },
+    {
+      "date": "1994-06-14",
+      "city": "Pokhra",
+      "country": "Nepal",
+      "lat": 28.7581,
+      "lng": 81.6094,
+      "mode": "Bus",
+      "from": "Kathmandu, Nepal",
+      "notes": ""
     }
   ],
   "settings": {
