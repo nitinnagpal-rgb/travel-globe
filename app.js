@@ -1005,12 +1005,18 @@ function updateStats(flights) {
     return true;
   });
 
-  // Add trip cities, countries & regions
+  // Add trip cities, countries & regions; sum trip miles when 'from' coords are present
+  let tripMiles = 0;
   filteredTrips.forEach(t => {
     const r = getRegionByCountry(t.country, t.lat);
     if (r !== 'other') continents.add(r);
     if (t.city) cities.add(t.city.trim().toLowerCase());
     if (t.country) countries.add(t.country.trim().toLowerCase());
+    if (t.tripMiles && Number.isFinite(t.tripMiles)) {
+      tripMiles += t.tripMiles;
+    } else if (t.fromLat != null && t.fromLng != null && t.lat != null && t.lng != null) {
+      tripMiles += haversineMiles(t.fromLat, t.fromLng, t.lat, t.lng);
+    }
   });
 
   document.querySelectorAll('#globe-view .stat-number').forEach(el => {
@@ -1018,6 +1024,7 @@ function updateStats(flights) {
     const label = el.closest('.stat')?.querySelector('.stat-label')?.textContent;
     let target;
     if (format === 'miles') target = totalDist;
+    else if (format === 'trip-miles') target = Math.round(tripMiles);
     else if (label === 'Flights') target = flights.length;
     else if (label === 'Airports') target = airports.size;
     else if (label === 'Airlines') target = airlines.size;
@@ -1026,8 +1033,19 @@ function updateStats(flights) {
     else if (label === 'Cities Visited') target = cities.size;
     else return;
 
-    animateNumber(el, target, format === 'miles');
+    animateNumber(el, target, format === 'miles' || format === 'trip-miles');
   });
+}
+
+// Great-circle distance in miles between two lat/lng points
+function haversineMiles(lat1, lng1, lat2, lng2) {
+  const R = 3958.7613; // Earth radius in miles
+  const toRad = d => d * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a = Math.sin(dLat / 2) ** 2 +
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(a));
 }
 
 // ===========================

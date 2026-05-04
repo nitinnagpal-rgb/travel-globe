@@ -1082,6 +1082,11 @@
       </div>
       <div class="stat-divider"></div>
       <div class="stat">
+        <span class="stat-number" data-target="0" data-format="trip-miles">0</span>
+        <span class="stat-label">Trip Miles</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
         <span class="stat-number" data-target="6">0</span>
         <span class="stat-label">Continents</span>
       </div>
@@ -1284,6 +1289,7 @@
               <th data-sort="country">Country <span class="sort-arrow">▼</span></th>
               <th data-sort="mode">Mode <span class="sort-arrow">▼</span></th>
               <th data-sort="from">From <span class="sort-arrow">▼</span></th>
+              <th data-sort="tripMiles">Miles <span class="sort-arrow">▼</span></th>
               <th data-sort="notes">Notes <span class="sort-arrow">▼</span></th>
               <th class="actions-cell">Actions</th>
             </tr>
@@ -1761,6 +1767,12 @@ window.initAdmin = function() {
       if (t.country) countries.add(t.country.trim().toLowerCase());
     });
 
+    // Sum trip miles across all trips that have a 'From' location with coords
+    var tripMilesTotal = (data.trips || []).reduce(function(sum, t) {
+      if (t.tripMiles && isFinite(t.tripMiles)) return sum + t.tripMiles;
+      return sum;
+    }, 0);
+
     var stats = [
       { label: 'Total Flights', value: flights.length.toLocaleString(), color: 'var(--color-na)' },
       { label: 'Airports', value: Object.keys(airports).length.toLocaleString(), color: 'var(--color-oceania)' },
@@ -1769,6 +1781,7 @@ window.initAdmin = function() {
       { label: 'Airlines', value: airlines.size.toLocaleString(), color: 'var(--color-eu)' },
       { label: 'Trips', value: tripCount.toLocaleString(), color: 'var(--color-success)' },
       { label: 'Miles Flown', value: totalDist.toLocaleString(), color: 'var(--color-asia)' },
+      { label: 'Trip Miles', value: tripMilesTotal.toLocaleString(), color: 'var(--color-success)' },
       { label: 'Date Range', value: dateRange, color: 'var(--color-sa)' },
     ];
 
@@ -2103,7 +2116,7 @@ window.initAdmin = function() {
     var tbody = $('#trips-tbody');
 
     if (total === 0) {
-      tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><h3>No trips found</h3><p>' + (tripSearch ? 'Try a different search term' : 'Add your first trip') + '</p></div></td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><h3>No trips found</h3><p>' + (tripSearch ? 'Try a different search term' : 'Add your first trip') + '</p></div></td></tr>';
     } else {
       tbody.innerHTML = pageTrips.map(function(t) {
         var origIdx = data.trips.indexOf(t);
@@ -2113,6 +2126,7 @@ window.initAdmin = function() {
           '<td>' + (t.country || '') + '</td>' +
           '<td><span class="mode-badge">' + (t.mode || '—') + '</span></td>' +
           '<td><span class="notes-text">' + (t.from || '—') + '</span></td>' +
+          '<td>' + (t.tripMiles ? t.tripMiles.toLocaleString() : '—') + '</td>' +
           '<td><span class="notes-text">' + (t.notes || '—') + '</span></td>' +
           '<td class="actions-cell">' +
           '<button class="btn-icon edit-trip" data-idx="' + origIdx + '" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>' +
@@ -2276,16 +2290,41 @@ window.initAdmin = function() {
         return;
       }
       var trip = { date: date, city: city, country: country, lat: lat, lng: lng, mode: mode, from: from, notes: notes };
-      if (editingTripIndex >= 0) {
-        data.trips[editingTripIndex] = trip;
-        showToast('Trip updated');
-      } else {
-        data.trips.push(trip);
-        showToast('Trip added');
-      }
-      saveToStorage();
-      closeTripModal();
-      renderAll();
+      // Geocode the 'From' location (if any) to compute trip distance
+      var fromPromise = from
+        ? geocodeFreeText(from).then(function(coords) {
+            if (coords) {
+              trip.fromLat = coords.lat;
+              trip.fromLng = coords.lng;
+              trip.tripMiles = Math.round(haversineMilesAdmin(coords.lat, coords.lng, lat, lng));
+            }
+            return trip;
+          })
+        : Promise.resolve(trip);
+
+      fromPromise.then(function(finalTrip) {
+        if (editingTripIndex >= 0) {
+          data.trips[editingTripIndex] = finalTrip;
+          showToast(
+            from && finalTrip.tripMiles
+              ? 'Trip updated — ' + finalTrip.tripMiles.toLocaleString() + ' miles travelled'
+              : 'Trip updated'
+          );
+        } else {
+          data.trips.push(finalTrip);
+          showToast(
+            from && finalTrip.tripMiles
+              ? 'Trip added — ' + finalTrip.tripMiles.toLocaleString() + ' miles travelled'
+              : 'Trip added'
+          );
+        }
+        if (from && !finalTrip.tripMiles) {
+          showToast('Trip saved, but couldn\'t locate "' + from + '" — distance not counted', 'error');
+        }
+        saveToStorage();
+        closeTripModal();
+        renderAll();
+      });
     }
 
     // If coords already filled (manual entry or already geocoded), save immediately
@@ -2300,6 +2339,31 @@ window.initAdmin = function() {
       if (ok) finishSave();
       else showToast('Couldn\'t find that location. Try a different spelling or set coordinates in Advanced.', 'error');
     });
+  }
+
+  // Haversine distance in miles — used by admin save flow
+  function haversineMilesAdmin(lat1, lng1, lat2, lng2) {
+    var R = 3958.7613;
+    var toRad = function(d) { return d * Math.PI / 180; };
+    var dLat = toRad(lat2 - lat1);
+    var dLng = toRad(lng2 - lng1);
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+            Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    return 2 * R * Math.asin(Math.sqrt(a));
+  }
+
+  // Geocode a free-text "From" location. Tries the same local cache first,
+  // then falls back to Nominatim. Accepts "City", "City, Country", or any
+  // free-form string.
+  function geocodeFreeText(text) {
+    if (!text) return Promise.resolve(null);
+    var parts = text.split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+    var city = parts[0];
+    var country = parts.length > 1 ? parts[parts.length - 1] : '';
+    var local = localGeocode(city, country);
+    if (local) return Promise.resolve(local);
+    return nominatimGeocode(city, country);
   }
 
   // CITY GEOCODING LOOKUP for trips
