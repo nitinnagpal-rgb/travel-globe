@@ -3070,7 +3070,10 @@
       "lng": -62.4831,
       "mode": "Boat",
       "from": "Ushuaia",
-      "notes": "Antarctica Expedition"
+      "notes": "Antarctica Expedition",
+      "fromLat": -54.843,
+      "fromLng": -68.296,
+      "tripMiles": 338
     },
     {
       "date": "2015-02-21",
@@ -3080,7 +3083,10 @@
       "lng": 76.6722,
       "mode": "Car",
       "from": "Ghaziabad, India",
-      "notes": ""
+      "notes": "",
+      "fromLat": 28.7749966,
+      "fromLng": 77.4586967,
+      "tripMiles": 231
     },
     {
       "date": "2008-05-25",
@@ -3090,7 +3096,10 @@
       "lng": 14.55,
       "mode": "Train",
       "from": "Stockholm, Sweden",
-      "notes": ""
+      "notes": "",
+      "fromLat": 59.3293,
+      "fromLng": 18.0686,
+      "tripMiles": 257
     },
     {
       "date": "2008-05-25",
@@ -3100,7 +3109,10 @@
       "lng": 14.1567,
       "mode": "Car",
       "from": "Bromolla, Sweden",
-      "notes": ""
+      "notes": "",
+      "fromLat": 56.116667,
+      "fromLng": 14.55,
+      "tripMiles": 16
     },
     {
       "date": "2012-07-13",
@@ -3110,7 +3122,10 @@
       "lng": 135.7681,
       "mode": "Train",
       "from": "Tokyo, Japan",
-      "notes": ""
+      "notes": "",
+      "fromLat": 35.6762,
+      "fromLng": 139.6503,
+      "tripMiles": 224
     },
     {
       "date": "2012-07-16",
@@ -3120,7 +3135,10 @@
       "lng": 139.6503,
       "mode": "Train",
       "from": "Kyoto, Japan",
-      "notes": ""
+      "notes": "",
+      "fromLat": 35.0115754,
+      "fromLng": 135.7681441,
+      "tripMiles": 224
     },
     {
       "date": "2003-01-09",
@@ -3129,8 +3147,11 @@
       "lat": 37.456,
       "lng": 126.7052,
       "mode": "Bus",
-      "from": "Incheon, South Korea",
-      "notes": ""
+      "from": "Seoul, South Korea",
+      "notes": "",
+      "fromLat": 37.5665,
+      "fromLng": 126.978,
+      "tripMiles": 17
     },
     {
       "date": "2023-02-19",
@@ -3139,8 +3160,11 @@
       "lat": -62,
       "lng": -58,
       "mode": "Boat",
-      "from": "Ushuaia",
-      "notes": "Antarctica Expedition"
+      "from": "Drake Passage",
+      "notes": "Antarctica Expedition",
+      "fromLat": -58.555462,
+      "fromLng": -62.4830802,
+      "tripMiles": 283
     },
     {
       "date": "2023-02-20",
@@ -3149,8 +3173,11 @@
       "lat": -62.9667,
       "lng": -60.6333,
       "mode": "Boat",
-      "from": "",
-      "notes": "Antarctica Expedition"
+      "from": "South Shetland Islands",
+      "notes": "Antarctica Expedition",
+      "fromLat": -62,
+      "fromLng": -58,
+      "tripMiles": 107
     },
     {
       "date": "2023-02-20",
@@ -3159,8 +3186,11 @@
       "lat": -64.8253,
       "lng": -63.4946,
       "mode": "Boat",
-      "from": "",
-      "notes": "Antarctica Expedition"
+      "from": "Deception Island",
+      "notes": "Antarctica Expedition",
+      "fromLat": -62.9667,
+      "fromLng": -60.6333,
+      "tripMiles": 155
     },
     {
       "date": "2023-02-21",
@@ -3169,8 +3199,11 @@
       "lat": -65.1011,
       "lng": -63.9819,
       "mode": "Boat",
-      "from": "",
-      "notes": ""
+      "from": "Port Lockroy",
+      "notes": "",
+      "fromLat": -64.8252567,
+      "fromLng": -63.4945578,
+      "tripMiles": 24
     },
     {
       "date": "2023-02-21",
@@ -3179,8 +3212,11 @@
       "lat": -65.1667,
       "lng": -64.15,
       "mode": "Boat",
-      "from": "",
-      "notes": "Antarctica Expedition"
+      "from": "Lemaire Channel",
+      "notes": "Antarctica Expedition",
+      "fromLat": -65.1010864,
+      "fromLng": -63.9819009,
+      "tripMiles": 7
     },
     {
       "date": "2023-02-22",
@@ -3189,8 +3225,11 @@
       "lat": -62.6,
       "lng": -60.5,
       "mode": "Boat",
-      "from": "",
-      "notes": "Antarctica Expedition"
+      "from": "Petermann Island",
+      "notes": "Antarctica Expedition",
+      "fromLat": -65.1667,
+      "fromLng": -64.15,
+      "tripMiles": 209
     },
     {
       "date": "2023-02-22",
@@ -3199,8 +3238,11 @@
       "lat": -63.5833,
       "lng": -55.7833,
       "mode": "Boat",
-      "from": "",
-      "notes": "Antarctica Expedition"
+      "from": "Livingston Island",
+      "notes": "Antarctica Expedition",
+      "fromLat": -62.6,
+      "fromLng": -60.5,
+      "tripMiles": 162
     },
     {
       "date": "2023-02-23",
@@ -3209,8 +3251,11 @@
       "lat": -62.0833,
       "lng": -58.3833,
       "mode": "Boat",
-      "from": "",
-      "notes": "Antarctica Expedition"
+      "from": "Paulet Island",
+      "notes": "Antarctica Expedition",
+      "fromLat": -63.5833,
+      "fromLng": -55.7833,
+      "tripMiles": 132
     },
     {
       "date": "1994-06-10",
@@ -3220,7 +3265,10 @@
       "lng": 85.3206,
       "mode": "Bus",
       "from": "Patna, India",
-      "notes": ""
+      "notes": "",
+      "fromLat": 25.6093,
+      "fromLng": 85.1376,
+      "tripMiles": 145
     },
     {
       "date": "1994-06-14",
@@ -3230,7 +3278,10 @@
       "lng": 81.6094,
       "mode": "Bus",
       "from": "Kathmandu, Nepal",
-      "notes": ""
+      "notes": "",
+      "fromLat": 27.708317,
+      "fromLng": 85.3205817,
+      "tripMiles": 237
     }
   ],
   "settings": {
