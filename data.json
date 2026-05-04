@@ -549,20 +549,6 @@
   },
   "flights": [
     {
-      "date": "2026-07-13",
-      "from": "SFO",
-      "to": "BNA",
-      "airline": "United Airlines",
-      "dist": 1964
-    },
-    {
-      "date": "2026-05-31",
-      "from": "SFO",
-      "to": "IAD",
-      "airline": "United Airlines",
-      "dist": 2413
-    },
-    {
       "date": "2026-03-31",
       "from": "IAD",
       "to": "SFO",
