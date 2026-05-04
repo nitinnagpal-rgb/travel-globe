@@ -859,6 +859,7 @@ function buildYearFilter() {
   if (!container) return;
   container.innerHTML = '';
 
+  // Buttons (default UI on wide containers)
   const allBtn = document.createElement('button');
   allBtn.className = 'year-btn active';
   allBtn.dataset.year = 'all';
@@ -873,17 +874,74 @@ function buildYearFilter() {
     container.appendChild(b);
   });
 
-  const yearBtns = container.querySelectorAll('.year-btn');
-  yearBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      yearBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      activeYear = btn.dataset.year;
-      updateVisibility();
-    });
+  // Dropdown (shown via CSS when .year-filter has .compact)
+  const select = document.createElement('select');
+  select.className = 'year-select';
+  select.setAttribute('aria-label', 'Filter by year');
+  const optAll = document.createElement('option');
+  optAll.value = 'all';
+  optAll.textContent = 'All Years';
+  select.appendChild(optAll);
+  sortedYears.forEach(y => {
+    const o = document.createElement('option');
+    o.value = y;
+    o.textContent = y;
+    select.appendChild(o);
   });
+  select.value = activeYear;
+  container.appendChild(select);
+
+  const yearBtns = container.querySelectorAll('.year-btn');
+  function setActiveYear(year) {
+    activeYear = year;
+    yearBtns.forEach(b => b.classList.toggle('active', b.dataset.year === year));
+    if (select.value !== year) select.value = year;
+    updateVisibility();
+  }
+  yearBtns.forEach(btn => {
+    btn.addEventListener('click', () => setActiveYear(btn.dataset.year));
+  });
+  select.addEventListener('change', () => setActiveYear(select.value));
 }
 buildYearFilter();
+
+// === Responsive layout for embedded / narrow iframes ===
+// Toggles body classes and switches the year filter to a dropdown when the
+// container gets too narrow for the row of year buttons.
+function applyResponsiveLayout() {
+  const w = window.innerWidth;
+  document.body.classList.toggle('narrow', w < 720);
+  document.body.classList.toggle('ultra-narrow', w < 480);
+
+  const yearFilter = document.getElementById('year-filter');
+  if (yearFilter) {
+    // Switch to a dropdown when there are simply too many years to lay out
+    // as buttons, or when the viewport is narrow. We avoid measuring the
+    // current bounding boxes (that creates a feedback loop with the
+    // ResizeObserver, since collapsing buttons shrinks the container).
+    const btnCount = yearFilter.querySelectorAll('.year-btn').length;
+    const compact =
+      w < 480 ||                       // narrow viewport — always collapse
+      (btnCount >= 6 && w < 760) ||    // many years on a small/medium screen
+      btnCount >= 10;                  // a lot of years no matter the width
+    yearFilter.classList.toggle('compact', compact);
+  }
+}
+applyResponsiveLayout();
+// Re-run after layout settles (year buttons just got appended) so row
+// detection uses real bounding boxes, not the pre-paint state.
+requestAnimationFrame(() => {
+  applyResponsiveLayout();
+  requestAnimationFrame(applyResponsiveLayout);
+});
+window.addEventListener('resize', applyResponsiveLayout);
+if (typeof ResizeObserver !== 'undefined') {
+  new ResizeObserver(applyResponsiveLayout).observe(document.body);
+  // Also observe the year filter itself — wrapping changes its height
+  // without changing the body, and we want the dropdown to kick in then.
+  const yfEl = document.getElementById('year-filter');
+  if (yfEl) new ResizeObserver(applyResponsiveLayout).observe(yfEl);
+}
 
 // ===========================
 // VISIBILITY UPDATES
