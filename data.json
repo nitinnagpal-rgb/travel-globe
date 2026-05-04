@@ -467,9 +467,402 @@
       "lng": 126.978,
       "city": "Seoul",
       "country": "South Korea"
+    },
+    "LGA": {
+      "lat": 40.7769,
+      "lng": -73.874,
+      "city": "New York LaGuardia",
+      "country": "USA"
+    },
+    "DCA": {
+      "lat": 38.8512,
+      "lng": -77.0402,
+      "city": "Washington DC Reagan",
+      "country": "USA"
+    },
+    "HND": {
+      "lat": 35.5494,
+      "lng": 139.7798,
+      "city": "Tokyo Haneda",
+      "country": "Japan"
+    },
+    "BOS": {
+      "lat": 42.3656,
+      "lng": -71.0096,
+      "city": "Boston",
+      "country": "USA"
+    },
+    "JFK": {
+      "lat": 40.6413,
+      "lng": -73.7781,
+      "city": "New York JFK",
+      "country": "USA"
+    },
+    "PHX": {
+      "lat": 33.4342,
+      "lng": -112.0116,
+      "city": "Phoenix",
+      "country": "USA"
+    },
+    "MSP": {
+      "lat": 44.8848,
+      "lng": -93.2223,
+      "city": "Minneapolis",
+      "country": "USA"
+    },
+    "HNL": {
+      "lat": 21.3245,
+      "lng": -157.9251,
+      "city": "Honolulu",
+      "country": "USA"
+    },
+    "KOA": {
+      "lat": 19.7388,
+      "lng": -156.0456,
+      "city": "Kona",
+      "country": "USA"
+    },
+    "JAC": {
+      "lat": 43.6073,
+      "lng": -110.7377,
+      "city": "Jackson Hole",
+      "country": "USA"
+    },
+    "SBA": {
+      "lat": 34.4262,
+      "lng": -119.8404,
+      "city": "Santa Barbara",
+      "country": "USA"
+    },
+    "PSP": {
+      "lat": 33.8297,
+      "lng": -116.5067,
+      "city": "Palm Springs",
+      "country": "USA"
+    },
+    "HOU": {
+      "lat": 29.6454,
+      "lng": -95.2789,
+      "city": "Houston Hobby",
+      "country": "USA"
     }
   },
   "flights": [
+    {
+      "date": "2026-07-13",
+      "from": "SFO",
+      "to": "BNA",
+      "airline": "United Airlines",
+      "dist": 1964
+    },
+    {
+      "date": "2026-05-31",
+      "from": "SFO",
+      "to": "IAD",
+      "airline": "United Airlines",
+      "dist": 2413
+    },
+    {
+      "date": "2026-03-31",
+      "from": "IAD",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 2413
+    },
+    {
+      "date": "2026-03-29",
+      "from": "SFO",
+      "to": "IAD",
+      "airline": "United Airlines",
+      "dist": 2413
+    },
+    {
+      "date": "2026-03-12",
+      "from": "MCO",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 2442
+    },
+    {
+      "date": "2026-03-11",
+      "from": "MCO",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 2442
+    },
+    {
+      "date": "2026-03-08",
+      "from": "SFO",
+      "to": "MCO",
+      "airline": "United Airlines",
+      "dist": 2442
+    },
+    {
+      "date": "2026-02-08",
+      "from": "SFO",
+      "to": "MCO",
+      "airline": "United Airlines",
+      "dist": 2442
+    },
+    {
+      "date": "2026-01-16",
+      "from": "EWR",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 2559
+    },
+    {
+      "date": "2026-01-14",
+      "from": "SFO",
+      "to": "EWR",
+      "airline": "United Airlines",
+      "dist": 2559
+    },
+    {
+      "date": "2026-01-13",
+      "from": "SFO",
+      "to": "EWR",
+      "airline": "United Airlines",
+      "dist": 2559
+    },
+    {
+      "date": "2025-12-30",
+      "from": "BOM",
+      "to": "DXB",
+      "airline": "Emirates",
+      "dist": 1201
+    },
+    {
+      "date": "2025-12-30",
+      "from": "DXB",
+      "to": "SFO",
+      "airline": "Emirates",
+      "dist": 8093
+    },
+    {
+      "date": "2025-12-18",
+      "from": "SFO",
+      "to": "EWR",
+      "airline": "United Airlines",
+      "dist": 2559
+    },
+    {
+      "date": "2025-12-17",
+      "from": "SFO",
+      "to": "EWR",
+      "airline": "United Airlines",
+      "dist": 2559
+    },
+    {
+      "date": "2025-12-17",
+      "from": "EWR",
+      "to": "DEL",
+      "airline": "United Airlines",
+      "dist": 7310
+    },
+    {
+      "date": "2025-12-10",
+      "from": "PDX",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 545
+    },
+    {
+      "date": "2025-12-09",
+      "from": "SFO",
+      "to": "PDX",
+      "airline": "United Airlines",
+      "dist": 545
+    },
+    {
+      "date": "2025-12-03",
+      "from": "LAS",
+      "to": "SJC",
+      "airline": "Southwest Airlines",
+      "dist": 385
+    },
+    {
+      "date": "2025-12-02",
+      "from": "SJC",
+      "to": "LAS",
+      "airline": "Southwest Airlines",
+      "dist": 385
+    },
+    {
+      "date": "2025-11-25",
+      "from": "LAX",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 338
+    },
+    {
+      "date": "2025-11-22",
+      "from": "SFO",
+      "to": "LAX",
+      "airline": "United Airlines",
+      "dist": 338
+    },
+    {
+      "date": "2025-11-21",
+      "from": "BRU",
+      "to": "CDG",
+      "airline": "United Airlines",
+      "dist": 156
+    },
+    {
+      "date": "2025-11-21",
+      "from": "CDG",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 5569
+    },
+    {
+      "date": "2025-11-21",
+      "from": "BRU",
+      "to": "CDG",
+      "airline": "Brussels Airlines",
+      "dist": 156
+    },
+    {
+      "date": "2025-11-20",
+      "from": "BRU",
+      "to": "CDG",
+      "airline": "Brussels Airlines",
+      "dist": 156
+    },
+    {
+      "date": "2025-11-18",
+      "from": "GVA",
+      "to": "BRU",
+      "airline": "Swiss Airlines",
+      "dist": 333
+    },
+    {
+      "date": "2025-11-18",
+      "from": "GVA",
+      "to": "BRU",
+      "airline": "Swiss International Air Lines",
+      "dist": 333
+    },
+    {
+      "date": "2025-11-17",
+      "from": "SFO",
+      "to": "LHR",
+      "airline": "United Airlines",
+      "dist": 5354
+    },
+    {
+      "date": "2025-11-16",
+      "from": "SFO",
+      "to": "EWR",
+      "airline": "United Airlines",
+      "dist": 2559
+    },
+    {
+      "date": "2025-11-16",
+      "from": "EWR",
+      "to": "GVA",
+      "airline": "United Airlines",
+      "dist": 3871
+    },
+    {
+      "date": "2025-10-31",
+      "from": "SAN",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 447
+    },
+    {
+      "date": "2025-10-29",
+      "from": "SFO",
+      "to": "SAN",
+      "airline": "United Airlines",
+      "dist": 447
+    },
+    {
+      "date": "2025-10-23",
+      "from": "MCO",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 2442
+    },
+    {
+      "date": "2025-10-19",
+      "from": "SFO",
+      "to": "MCO",
+      "airline": "United Airlines",
+      "dist": 2442
+    },
+    {
+      "date": "2025-09-27",
+      "from": "SFO",
+      "to": "DEL",
+      "airline": "United Airlines",
+      "dist": 7694
+    },
+    {
+      "date": "2025-09-24",
+      "from": "SFO",
+      "to": "SEA",
+      "airline": "Alaska Airlines",
+      "dist": 679
+    },
+    {
+      "date": "2025-09-24",
+      "from": "SFO",
+      "to": "SEA",
+      "airline": "United Airlines",
+      "dist": 679
+    },
+    {
+      "date": "2025-09-18",
+      "from": "LAX",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 338
+    },
+    {
+      "date": "2025-09-18",
+      "from": "SFO",
+      "to": "LAX",
+      "airline": "United Airlines",
+      "dist": 338
+    },
+    {
+      "date": "2025-08-31",
+      "from": "SFO",
+      "to": "DEL",
+      "airline": "United Airlines",
+      "dist": 7694
+    },
+    {
+      "date": "2025-08-27",
+      "from": "SFO",
+      "to": "SAN",
+      "airline": "United Airlines",
+      "dist": 447
+    },
+    {
+      "date": "2025-08-20",
+      "from": "SFO",
+      "to": "SAN",
+      "airline": "United Airlines",
+      "dist": 447
+    },
+    {
+      "date": "2025-08-04",
+      "from": "OGG",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 2336
+    },
+    {
+      "date": "2025-07-29",
+      "from": "SFO",
+      "to": "OGG",
+      "airline": "United Airlines",
+      "dist": 2336
+    },
     {
       "date": "2024-06-14",
       "from": "EWR",
@@ -653,6 +1046,13 @@
       "dist": 5684
     },
     {
+      "date": "2023-08-05",
+      "from": "SFO",
+      "to": "FRA",
+      "airline": "Lufthansa",
+      "dist": 5684
+    },
+    {
       "date": "2023-06-19",
       "from": "BRU",
       "to": "ORD",
@@ -665,6 +1065,27 @@
       "to": "SFO",
       "airline": "United Airlines",
       "dist": 1841
+    },
+    {
+      "date": "2023-06-13",
+      "from": "SFO",
+      "to": "ORD",
+      "airline": "United Airlines",
+      "dist": 1842
+    },
+    {
+      "date": "2023-06-12",
+      "from": "SFO",
+      "to": "LHR",
+      "airline": "United Airlines",
+      "dist": 5354
+    },
+    {
+      "date": "2023-06-11",
+      "from": "SFO",
+      "to": "LHR",
+      "airline": "United Airlines",
+      "dist": 5354
     },
     {
       "date": "2023-06-09",
@@ -695,6 +1116,13 @@
       "dist": 5353
     },
     {
+      "date": "2023-05-10",
+      "from": "SFO",
+      "to": "LHR",
+      "airline": "United Airlines",
+      "dist": 5354
+    },
+    {
       "date": "2023-02-28",
       "from": "IAH",
       "to": "SFO",
@@ -714,6 +1142,20 @@
       "to": "IAH",
       "airline": "United Airlines",
       "dist": 5078
+    },
+    {
+      "date": "2023-02-22",
+      "from": "SNA",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 372
+    },
+    {
+      "date": "2023-02-18",
+      "from": "SFO",
+      "to": "SNA",
+      "airline": "United Airlines",
+      "dist": 372
     },
     {
       "date": "2023-02-15",
@@ -863,6 +1305,27 @@
       "dist": 5353
     },
     {
+      "date": "2022-07-11",
+      "from": "SFO",
+      "to": "LHR",
+      "airline": "United Airlines",
+      "dist": 5354
+    },
+    {
+      "date": "2022-07-07",
+      "from": "SFO",
+      "to": "LHR",
+      "airline": "United Airlines",
+      "dist": 5354
+    },
+    {
+      "date": "2022-06-29",
+      "from": "SFO",
+      "to": "LHR",
+      "airline": "United Airlines",
+      "dist": 5354
+    },
+    {
       "date": "2022-06-16",
       "from": "BNA",
       "to": "SFO",
@@ -889,6 +1352,13 @@
       "to": "SFO",
       "airline": "United Airlines",
       "dist": 5459
+    },
+    {
+      "date": "2022-06-10",
+      "from": "ARN",
+      "to": "AMS",
+      "airline": "Lufthansa",
+      "dist": 716
     },
     {
       "date": "2022-06-09",
@@ -952,6 +1422,13 @@
       "to": "DEL",
       "airline": "United Airlines",
       "dist": 7309
+    },
+    {
+      "date": "2022-05-08",
+      "from": "SNA",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 372
     },
     {
       "date": "2022-05-06",
@@ -1080,6 +1557,13 @@
       "dist": 5353
     },
     {
+      "date": "2022-02-09",
+      "from": "SNA",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 372
+    },
+    {
       "date": "2022-02-08",
       "from": "SNA",
       "to": "SFO",
@@ -1092,6 +1576,13 @@
       "to": "SNA",
       "airline": "United Airlines",
       "dist": 371
+    },
+    {
+      "date": "2021-12-21",
+      "from": "SFO",
+      "to": "LAX",
+      "airline": "United Airlines",
+      "dist": 338
     },
     {
       "date": "2021-12-18",
@@ -1185,6 +1676,13 @@
       "dist": 5353
     },
     {
+      "date": "2021-11-06",
+      "from": "SFO",
+      "to": "LHR",
+      "airline": "United Airlines",
+      "dist": 5354
+    },
+    {
       "date": "2021-10-29",
       "from": "AUS",
       "to": "SFO",
@@ -1234,6 +1732,34 @@
       "dist": 371
     },
     {
+      "date": "2021-09-18",
+      "from": "OGG",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 2336
+    },
+    {
+      "date": "2021-09-13",
+      "from": "SFO",
+      "to": "OGG",
+      "airline": "United Airlines",
+      "dist": 2336
+    },
+    {
+      "date": "2021-07-16",
+      "from": "DFW",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 1461
+    },
+    {
+      "date": "2021-07-14",
+      "from": "SFO",
+      "to": "DFW",
+      "airline": "United Airlines",
+      "dist": 1461
+    },
+    {
       "date": "2021-06-08",
       "from": "IAH",
       "to": "DTW",
@@ -1276,6 +1802,13 @@
       "dist": 1605
     },
     {
+      "date": "2020-03-06",
+      "from": "MUC",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 5864
+    },
+    {
       "date": "2020-03-05",
       "from": "DFW",
       "to": "SFO",
@@ -1288,6 +1821,13 @@
       "to": "DFW",
       "airline": "United Airlines",
       "dist": 1460
+    },
+    {
+      "date": "2020-03-03",
+      "from": "SFO",
+      "to": "FRA",
+      "airline": "United Airlines",
+      "dist": 5684
     },
     {
       "date": "2020-02-21",
@@ -1346,11 +1886,39 @@
       "dist": 1460
     },
     {
+      "date": "2020-01-23",
+      "from": "IAD",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 2413
+    },
+    {
       "date": "2020-01-21",
       "from": "SFO",
       "to": "DFW",
       "airline": "United Airlines",
       "dist": 1460
+    },
+    {
+      "date": "2020-01-21",
+      "from": "SFO",
+      "to": "IAD",
+      "airline": "United Airlines",
+      "dist": 2413
+    },
+    {
+      "date": "2020-01-10",
+      "from": "SFO",
+      "to": "DFW",
+      "airline": "United Airlines",
+      "dist": 1461
+    },
+    {
+      "date": "2020-01-07",
+      "from": "SFO",
+      "to": "IAD",
+      "airline": "United Airlines",
+      "dist": 2413
     },
     {
       "date": "2019-12-26",
@@ -1388,11 +1956,25 @@
       "dist": 5565
     },
     {
+      "date": "2019-12-12",
+      "from": "ORD",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 1842
+    },
+    {
       "date": "2019-12-10",
       "from": "SFO",
       "to": "CDG",
       "airline": "United Airlines",
       "dist": 5565
+    },
+    {
+      "date": "2019-12-10",
+      "from": "SFO",
+      "to": "ORD",
+      "airline": "United Airlines",
+      "dist": 1842
     },
     {
       "date": "2019-11-22",
@@ -1409,6 +1991,13 @@
       "dist": 347
     },
     {
+      "date": "2019-11-21",
+      "from": "EWR",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 2559
+    },
+    {
       "date": "2019-11-19",
       "from": "YYC",
       "to": "YYZ",
@@ -1423,11 +2012,32 @@
       "dist": 1017
     },
     {
+      "date": "2019-11-18",
+      "from": "SJD",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 1250
+    },
+    {
       "date": "2019-11-17",
       "from": "SJD",
       "to": "SFO",
       "airline": "United Airlines",
       "dist": 1248
+    },
+    {
+      "date": "2019-11-17",
+      "from": "SFO",
+      "to": "EWR",
+      "airline": "United Airlines",
+      "dist": 2559
+    },
+    {
+      "date": "2019-11-16",
+      "from": "SJD",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 1250
     },
     {
       "date": "2019-11-15",
@@ -1444,6 +2054,13 @@
       "dist": 5350
     },
     {
+      "date": "2019-11-12",
+      "from": "SFO",
+      "to": "SJD",
+      "airline": "United Airlines",
+      "dist": 1250
+    },
+    {
       "date": "2019-11-07",
       "from": "BCN",
       "to": "FRA",
@@ -1456,6 +2073,13 @@
       "to": "LHR",
       "airline": "Lufthansa",
       "dist": 406
+    },
+    {
+      "date": "2019-11-06",
+      "from": "SFO",
+      "to": "LHR",
+      "airline": "United Airlines",
+      "dist": 5354
     },
     {
       "date": "2019-11-04",
@@ -1477,6 +2101,20 @@
       "to": "SFO",
       "airline": "US Airways",
       "dist": 1460
+    },
+    {
+      "date": "2019-10-29",
+      "from": "SFO",
+      "to": "LHR",
+      "airline": "United Airlines",
+      "dist": 5354
+    },
+    {
+      "date": "2019-10-29",
+      "from": "DFW",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 1461
     },
     {
       "date": "2019-10-28",
@@ -1512,6 +2150,20 @@
       "to": "YYZ",
       "airline": "United Airlines",
       "dist": 2252
+    },
+    {
+      "date": "2019-10-16",
+      "from": "SFO",
+      "to": "SJD",
+      "airline": "United Airlines",
+      "dist": 1250
+    },
+    {
+      "date": "2019-10-16",
+      "from": "SFO",
+      "to": "LHR",
+      "airline": "United Airlines",
+      "dist": 5354
     },
     {
       "date": "2019-10-10",
@@ -1603,6 +2255,20 @@
       "to": "SYD",
       "airline": "United Airlines",
       "dist": 7421
+    },
+    {
+      "date": "2019-09-04",
+      "from": "IAD",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 2413
+    },
+    {
+      "date": "2019-08-30",
+      "from": "SFO",
+      "to": "IAD",
+      "airline": "United Airlines",
+      "dist": 2413
     },
     {
       "date": "2019-08-29",
@@ -1759,6 +2425,13 @@
       "dist": 1460
     },
     {
+      "date": "2019-06-25",
+      "from": "ORD",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 1842
+    },
+    {
       "date": "2019-06-24",
       "from": "ORD",
       "to": "SFO",
@@ -1771,6 +2444,13 @@
       "to": "ORD",
       "airline": "United Airlines",
       "dist": 1840
+    },
+    {
+      "date": "2019-06-17",
+      "from": "LAS",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 413
     },
     {
       "date": "2019-06-13",
@@ -2142,6 +2822,13 @@
       "to": "DEN",
       "airline": "United Airlines",
       "dist": 767
+    },
+    {
+      "date": "2019-01-09",
+      "from": "EWR",
+      "to": "LAS",
+      "airline": "United Airlines",
+      "dist": 2222
     },
     {
       "date": "2019-01-08",
@@ -2648,6 +3335,13 @@
       "dist": 1460
     },
     {
+      "date": "2018-05-09",
+      "from": "LAS",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 413
+    },
+    {
       "date": "2018-05-07",
       "from": "CPH",
       "to": "SFO",
@@ -2660,6 +3354,13 @@
       "to": "CPH",
       "airline": "SAS",
       "dist": 5469
+    },
+    {
+      "date": "2018-04-29",
+      "from": "IAD",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 2413
     },
     {
       "date": "2018-04-27",
@@ -2709,6 +3410,27 @@
       "to": "LHR",
       "airline": "United Airlines",
       "dist": 5350
+    },
+    {
+      "date": "2018-04-18",
+      "from": "SFO",
+      "to": "CPH",
+      "airline": "Air India",
+      "dist": 5472
+    },
+    {
+      "date": "2018-04-17",
+      "from": "SFO",
+      "to": "CPH",
+      "airline": "Air India",
+      "dist": 5472
+    },
+    {
+      "date": "2018-04-17",
+      "from": "SFO",
+      "to": "CPH",
+      "airline": "United Airlines",
+      "dist": 5472
     },
     {
       "date": "2018-04-08",
@@ -2900,6 +3622,20 @@
       "dist": 2252
     },
     {
+      "date": "2017-06-30",
+      "from": "IAD",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 2413
+    },
+    {
+      "date": "2017-06-25",
+      "from": "SFO",
+      "to": "LAS",
+      "airline": "United Airlines",
+      "dist": 413
+    },
+    {
       "date": "2017-03-02",
       "from": "SYD",
       "to": "SFO",
@@ -2928,116 +3664,88 @@
       "dist": 6526
     },
     {
-      "date": "2026-03-29",
-      "from": "SFO",
-      "to": "IAD",
-      "airline": "United Airlines",
-      "dist": 2413
-    },
-    {
-      "date": "2026-03-31",
-      "from": "IAD",
+      "date": "2016-08-31",
+      "from": "LAS",
       "to": "SFO",
       "airline": "United Airlines",
-      "dist": 2413
+      "dist": 413
     },
     {
-      "date": "2026-03-08",
+      "date": "2016-08-28",
       "from": "SFO",
-      "to": "MCO",
+      "to": "LAS",
       "airline": "United Airlines",
-      "dist": 2442
+      "dist": 413
     },
     {
-      "date": "2026-03-11",
-      "from": "MCO",
+      "date": "2016-07-25",
+      "from": "SAN",
       "to": "SFO",
       "airline": "United Airlines",
-      "dist": 2442
+      "dist": 447
     },
     {
-      "date": "2025-12-17",
-      "from": "SFO",
-      "to": "EWR",
+      "date": "2016-05-29",
+      "from": "LHR",
+      "to": "SFO",
       "airline": "United Airlines",
-      "dist": 2559
+      "dist": 5354
     },
     {
-      "date": "2025-12-17",
-      "from": "EWR",
+      "date": "2016-04-12",
+      "from": "SAN",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 447
+    },
+    {
+      "date": "2016-04-08",
+      "from": "SAN",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 447
+    },
+    {
+      "date": "2015-05-11",
+      "from": "IAH",
+      "to": "SFO",
+      "airline": "United Airlines",
+      "dist": 1633
+    },
+    {
+      "date": "2015-02-15",
+      "from": "FRA",
       "to": "DEL",
-      "airline": "United Airlines",
-      "dist": 7310
+      "airline": "Lufthansa",
+      "dist": 3804
     },
     {
-      "date": "2025-12-30",
-      "from": "BOM",
-      "to": "DXB",
-      "airline": "Emirates",
-      "dist": 1201
-    },
-    {
-      "date": "2025-12-30",
-      "from": "DXB",
-      "to": "SFO",
-      "airline": "Emirates",
-      "dist": 8093
-    },
-    {
-      "date": "2025-12-09",
+      "date": "2015-02-14",
       "from": "SFO",
-      "to": "PDX",
-      "airline": "United Airlines",
-      "dist": 545
+      "to": "FRA",
+      "airline": "Lufthansa",
+      "dist": 5684
     },
     {
-      "date": "2025-12-10",
-      "from": "PDX",
+      "date": "2014-09-09",
+      "from": "ZRH",
       "to": "SFO",
-      "airline": "United Airlines",
-      "dist": 545
+      "airline": "Swiss International Air Lines",
+      "dist": 5826
     },
     {
-      "date": "2025-11-16",
-      "from": "SFO",
-      "to": "EWR",
-      "airline": "United Airlines",
-      "dist": 2559
+      "date": "2014-09-09",
+      "from": "VIE",
+      "to": "ZRH",
+      "airline": "Swiss International Air Lines",
+      "dist": 375
     },
     {
-      "date": "2025-11-16",
-      "from": "EWR",
-      "to": "GVA",
-      "airline": "United Airlines",
-      "dist": 3871
-    },
-    {
-      "date": "2025-11-18",
-      "from": "GVA",
-      "to": "BRU",
-      "airline": "Swiss Airlines",
-      "dist": 333
-    },
-    {
-      "date": "2025-11-21",
-      "from": "BRU",
-      "to": "CDG",
-      "airline": "United Airlines",
-      "dist": 156
-    },
-    {
-      "date": "2025-11-21",
-      "from": "CDG",
+      "date": "2014-05-07",
+      "from": "LAS",
       "to": "SFO",
-      "airline": "United Airlines",
-      "dist": 5569
-    },
-    {
-      "date": "2012-07-06",
-      "from": "SFO",
-      "to": "NRT",
-      "airline": "United Airlines",
-      "dist": 5149
+      "airline": "Unknown",
+      "dist": 413
     },
     {
       "date": "2012-07-21",
@@ -3047,11 +3755,11 @@
       "dist": 5149
     },
     {
-      "date": "2003-01-08",
-      "from": "DEL",
-      "to": "ICN",
-      "airline": "Asiana Airlines",
-      "dist": 2920
+      "date": "2012-07-06",
+      "from": "SFO",
+      "to": "NRT",
+      "airline": "United Airlines",
+      "dist": 5149
     },
     {
       "date": "2003-01-09",
@@ -3059,6 +3767,13 @@
       "to": "SFO",
       "airline": "Asiana Airlines",
       "dist": 5619
+    },
+    {
+      "date": "2003-01-08",
+      "from": "DEL",
+      "to": "ICN",
+      "airline": "Asiana Airlines",
+      "dist": 2920
     }
   ],
   "trips": [
