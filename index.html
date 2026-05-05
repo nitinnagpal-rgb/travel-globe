@@ -317,6 +317,102 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: 16px;
+  position: relative;
+  transition: border-color 150ms ease, background 150ms ease, transform 150ms ease;
+}
+#admin-view .stat-card.clickable { cursor: pointer; }
+#admin-view .stat-card.clickable:hover {
+  border-color: rgba(74, 122, 184, 0.5);
+  background: var(--color-surface-2);
+  transform: translateY(-1px);
+}
+#admin-view .stat-card.clickable::after {
+  content: '›';
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--color-text-faint);
+  transition: color 150ms ease, transform 150ms ease;
+}
+#admin-view .stat-card.clickable:hover::after {
+  color: var(--color-accent);
+  transform: translateX(2px);
+}
+
+/* ====== STAT LIST MODAL ====== */
+#admin-view .stat-list-search-wrap { margin-bottom: 12px; }
+#admin-view .stat-list-scroll {
+  max-height: 50vh;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+#admin-view .stat-list-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+#admin-view .stat-list-table thead {
+  position: sticky;
+  top: 0;
+  background: var(--color-surface);
+  z-index: 1;
+}
+#admin-view .stat-list-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+#admin-view .stat-list-table th.stat-list-col-count,
+#admin-view .stat-list-table td.stat-list-col-count {
+  width: 90px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+#admin-view .stat-list-table th.stat-list-col-source,
+#admin-view .stat-list-table td.stat-list-col-source {
+  width: 110px;
+  text-align: right;
+  white-space: nowrap;
+}
+#admin-view .stat-list-table td {
+  padding: 9px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+#admin-view .stat-list-table tr:last-child td { border-bottom: none; }
+#admin-view .stat-list-table tr:hover td { background: rgba(255,255,255,0.02); }
+#admin-view .stat-list-name { color: #fff; font-weight: 500; }
+#admin-view .stat-list-sub { color: var(--color-text-muted); font-size: 11px; margin-top: 2px; }
+#admin-view .stat-list-source-pill {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+#admin-view .stat-list-source-pill.flights { color: #93c5fd; background: rgba(74,122,184,0.15); border: 1px solid rgba(74,122,184,0.3); }
+#admin-view .stat-list-source-pill.trips   { color: #86efac; background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.3); }
+#admin-view .stat-list-source-pill.both    { color: #c4b5fd; background: rgba(139,92,246,0.12); border: 1px solid rgba(139,92,246,0.3); }
+#admin-view .stat-list-empty {
+  padding: 24px;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+#admin-view .stat-list-footer-count {
+  flex: 1;
+  font-size: 12px;
+  color: var(--color-text-muted);
 }
 
 #admin-view .stat-card-label {
@@ -1603,6 +1699,40 @@
     </div>
   </div>
 
+  <!-- STAT LIST MODAL (drill-down) -->
+  <div class="modal-overlay" id="stat-list-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="stat-list-title">List</h2>
+        <button class="btn-icon" id="stat-list-close">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="stat-list-search-wrap">
+          <input type="text" class="form-input" id="stat-list-search" placeholder="Filter..." autocomplete="off">
+        </div>
+        <div class="stat-list-scroll">
+          <table class="stat-list-table">
+            <thead>
+              <tr>
+                <th id="stat-list-col-name">Name</th>
+                <th class="stat-list-col-count">Count</th>
+                <th class="stat-list-col-source">Source</th>
+              </tr>
+            </thead>
+            <tbody id="stat-list-tbody"></tbody>
+          </table>
+          <div class="stat-list-empty" id="stat-list-empty" hidden>No matches.</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span class="stat-list-footer-count" id="stat-list-footer-count"></span>
+        <button class="btn" id="stat-list-done">Done</button>
+      </div>
+    </div>
+  </div>
+
   <!-- CONFIRM DIALOG -->
   <div class="confirm-overlay" id="confirm-dialog">
     <div class="confirm-box">
@@ -1787,44 +1917,138 @@ window.initAdmin = function() {
   }
 
   // STATS
+  // Country → continent mapping (kept in sync with app.js getRegionByCountry)
+  var CONTINENT_MAP = {
+    'north-america': { label: 'North America', countries: ['USA', 'Canada', 'Mexico'] },
+    'south-america': { label: 'South America', countries: ['Argentina','Peru','Panama','Brazil','Chile','Colombia','Ecuador','Bolivia','Uruguay','Paraguay','Venezuela'] },
+    'europe':        { label: 'Europe',        countries: ['UK','Germany','France','Netherlands','Sweden','Denmark','Norway','Finland','Belgium','Spain','Austria','Slovakia','Switzerland','Italy','Portugal','Ireland','Greece','Poland','Czech Republic','Hungary','Romania','Croatia','Iceland','Estonia','Latvia','Lithuania','Slovenia','Serbia','Bulgaria','Montenegro','Albania','North Macedonia','Bosnia and Herzegovina','Luxembourg','Malta','Cyprus','Scotland','Wales'] },
+    'asia':          { label: 'Asia',          countries: ['India','Thailand','Singapore','Japan','China','South Korea','Vietnam','Malaysia','Indonesia','Philippines','Sri Lanka','Nepal','Bangladesh','Myanmar','Cambodia','Laos','Taiwan','Hong Kong','UAE','Israel','Turkey','Saudi Arabia','Qatar','Jordan','Lebanon','Oman','Bahrain','Kuwait'] },
+    'oceania':       { label: 'Oceania',       countries: ['Australia','New Zealand','Fiji','Papua New Guinea'] },
+    'antarctica':    { label: 'Antarctica',    countries: ['Antarctica','South Georgia','South Georgia and the South Sandwich Islands','Falkland Islands'] },
+  };
+  var COUNTRY_TO_CONTINENT = (function() {
+    var m = {};
+    Object.keys(CONTINENT_MAP).forEach(function(key) {
+      CONTINENT_MAP[key].countries.forEach(function(c) {
+        m[c.toLowerCase()] = key;
+      });
+    });
+    return m;
+  })();
+  function continentOf(country, lat) {
+    if (!country && (lat == null)) return null;
+    if (country) {
+      var key = COUNTRY_TO_CONTINENT[country.trim().toLowerCase()];
+      if (key) return key;
+    }
+    if (typeof lat === 'number') {
+      if (lat <= -55) return 'antarctica';
+      if (lat >= 60 && lat <= 75) return 'europe';
+    }
+    return null;
+  }
+
+  // Cached breakdowns for the click-to-list modal. Populated by renderStats().
+  var statBreakdowns = {
+    cities: [], countries: [], airports: [], continents: [],
+  };
+
+  // Helper: increment a Map<lowerCaseKey, {name, count, sources:Set}> entry.
+  function bumpEntry(map, key, displayName, source) {
+    if (!key) return;
+    var k = key.toString().trim();
+    if (!k) return;
+    var lk = k.toLowerCase();
+    var entry = map.get(lk);
+    if (!entry) {
+      entry = { name: displayName || k, count: 0, sources: new Set() };
+      map.set(lk, entry);
+    }
+    entry.count++;
+    entry.sources.add(source);
+  }
+
   function renderStats() {
     var flights = data.flights;
     var airports = data.airports;
-    var airportCodes = new Set();
     var airlines = new Set();
     var totalDist = 0;
     var minDate = '', maxDate = '';
 
+    var citiesMap = new Map();      // lowercase → {name,count,sources}
+    var countriesMap = new Map();
+    var airportsMap = new Map();    // key = code
+    var continentsMap = new Map();  // key = continent slug
+
+    function tagAirport(code, source) {
+      if (!code) return;
+      var ap = airports[code];
+      if (!ap) {
+        // Still record the unknown code so it shows up.
+        bumpEntry(airportsMap, code, code, source);
+        return;
+      }
+      bumpEntry(airportsMap, code, code, source);
+      if (ap.city) bumpEntry(citiesMap, ap.city, ap.city, source);
+      if (ap.country) bumpEntry(countriesMap, ap.country, ap.country, source);
+      var cont = continentOf(ap.country, ap.lat);
+      if (cont) bumpEntry(continentsMap, cont, CONTINENT_MAP[cont].label, source);
+    }
+
     flights.forEach(function(f) {
-      airportCodes.add(f.from);
-      airportCodes.add(f.to);
       airlines.add(f.airline);
       totalDist += f.dist || 0;
       if (!minDate || f.date < minDate) minDate = f.date;
       if (!maxDate || f.date > maxDate) maxDate = f.date;
+      tagAirport(f.from, 'flights');
+      tagAirport(f.to, 'flights');
     });
+
+    (data.trips || []).forEach(function(t) {
+      if (t.city) bumpEntry(citiesMap, t.city, t.city, 'trips');
+      if (t.country) bumpEntry(countriesMap, t.country, t.country, 'trips');
+      var cont = continentOf(t.country, t.lat);
+      if (cont) bumpEntry(continentsMap, cont, CONTINENT_MAP[cont].label, 'trips');
+    });
+
+    // Decorate airport entries with city/country for richer display.
+    airportsMap.forEach(function(entry) {
+      var ap = airports[entry.name];
+      if (ap) entry.sub = (ap.city || '') + (ap.country ? ', ' + ap.country : '');
+    });
+    // Decorate city entries with their country (best-effort: from any airport in that city).
+    citiesMap.forEach(function(entry) {
+      Object.values(airports).forEach(function(ap) {
+        if (!entry.sub && ap.city && ap.city.trim().toLowerCase() === entry.name.trim().toLowerCase()) {
+          entry.sub = ap.country;
+        }
+      });
+      if (!entry.sub) {
+        // Try trip data
+        (data.trips || []).forEach(function(t) {
+          if (!entry.sub && t.city && t.city.trim().toLowerCase() === entry.name.trim().toLowerCase()) {
+            entry.sub = t.country;
+          }
+        });
+      }
+    });
+
+    // Convert maps to sorted arrays (alphabetical by name) and stash for click handler.
+    function toSorted(map) {
+      return Array.from(map.values()).sort(function(a, b) {
+        return a.name.localeCompare(b.name);
+      });
+    }
+    statBreakdowns.cities     = toSorted(citiesMap);
+    statBreakdowns.countries  = toSorted(countriesMap);
+    statBreakdowns.airports   = toSorted(airportsMap);
+    statBreakdowns.continents = toSorted(continentsMap);
 
     var dateRange = minDate && maxDate
       ? formatDate(minDate) + ' — ' + formatDate(maxDate)
       : 'No flights';
 
     var tripCount = (data.trips || []).length;
-
-    // Compute unique cities and countries across BOTH airports and trips
-    // Dedupe case-insensitively to avoid double counting ("Paris" / "paris")
-    var cities = new Set();
-    var countries = new Set();
-    Object.keys(airports).forEach(function(code) {
-      var ap = airports[code];
-      if (ap && ap.city) cities.add(ap.city.trim().toLowerCase());
-      if (ap && ap.country) countries.add(ap.country.trim().toLowerCase());
-    });
-    (data.trips || []).forEach(function(t) {
-      if (t.city) cities.add(t.city.trim().toLowerCase());
-      if (t.country) countries.add(t.country.trim().toLowerCase());
-    });
-
-    // Sum trip miles across all trips that have a 'From' location with coords
     var tripMilesTotal = (data.trips || []).reduce(function(sum, t) {
       if (t.tripMiles && isFinite(t.tripMiles)) return sum + t.tripMiles;
       return sum;
@@ -1832,20 +2056,100 @@ window.initAdmin = function() {
 
     var stats = [
       { label: 'Total Flights', value: flights.length.toLocaleString(), color: 'var(--color-na)' },
-      { label: 'Airports', value: Object.keys(airports).length.toLocaleString(), color: 'var(--color-oceania)' },
-      { label: 'Cities Visited', value: cities.size.toLocaleString(), color: 'var(--color-ant)' },
-      { label: 'Countries', value: countries.size.toLocaleString(), color: 'var(--color-af)' },
-      { label: 'Airlines', value: airlines.size.toLocaleString(), color: 'var(--color-eu)' },
-      { label: 'Trips', value: tripCount.toLocaleString(), color: 'var(--color-success)' },
-      { label: 'Miles Flown', value: totalDist.toLocaleString(), color: 'var(--color-asia)' },
-      { label: 'Trip Miles', value: tripMilesTotal.toLocaleString(), color: 'var(--color-success)' },
-      { label: 'Date Range', value: dateRange, color: 'var(--color-sa)' },
+      { label: 'Airports',      value: statBreakdowns.airports.length.toLocaleString(),  color: 'var(--color-oceania)', listKey: 'airports' },
+      { label: 'Cities Visited', value: statBreakdowns.cities.length.toLocaleString(),    color: 'var(--color-ant)',     listKey: 'cities' },
+      { label: 'Countries',     value: statBreakdowns.countries.length.toLocaleString(), color: 'var(--color-af)',      listKey: 'countries' },
+      { label: 'Continents',    value: statBreakdowns.continents.length.toLocaleString(),color: 'var(--color-asia)',    listKey: 'continents' },
+      { label: 'Airlines',      value: airlines.size.toLocaleString(),                    color: 'var(--color-eu)' },
+      { label: 'Trips',         value: tripCount.toLocaleString(),                        color: 'var(--color-success)' },
+      { label: 'Miles Flown',   value: totalDist.toLocaleString(),                        color: 'var(--color-asia)' },
+      { label: 'Trip Miles',    value: tripMilesTotal.toLocaleString(),                   color: 'var(--color-success)' },
+      { label: 'Date Range',    value: dateRange,                                         color: 'var(--color-sa)' },
     ];
 
     var grid = $('#admin-stats-grid');
     grid.innerHTML = stats.map(function(s) {
-      return '<div class="stat-card"><div class="stat-card-label">' + s.label + '</div><div class="stat-card-value" style="color: ' + s.color + ';' + (s.label === 'Date Range' ? ' font-size: 14px;' : '') + '">' + s.value + '</div></div>';
+      var clickable = s.listKey ? ' clickable' : '';
+      var dataAttr = s.listKey ? ' data-list-key="' + s.listKey + '"' : '';
+      var fontStyle = (s.label === 'Date Range') ? ' font-size: 14px;' : '';
+      return '<div class="stat-card' + clickable + '"' + dataAttr + '>' +
+        '<div class="stat-card-label">' + s.label + '</div>' +
+        '<div class="stat-card-value" style="color: ' + s.color + ';' + fontStyle + '">' + s.value + '</div>' +
+        '</div>';
     }).join('');
+  }
+
+  // ===== STAT LIST MODAL =====
+  var STAT_LIST_TITLES = {
+    cities: 'Cities Visited',
+    countries: 'Countries',
+    airports: 'Airports',
+    continents: 'Continents',
+  };
+  var STAT_LIST_COLNAMES = {
+    cities: 'City',
+    countries: 'Country',
+    airports: 'Airport',
+    continents: 'Continent',
+  };
+  var currentStatListKey = null;
+
+  function openStatList(key) {
+    var entries = statBreakdowns[key];
+    if (!entries) return;
+    currentStatListKey = key;
+    $('#stat-list-title').textContent = STAT_LIST_TITLES[key] + ' (' + entries.length + ')';
+    $('#stat-list-col-name').textContent = STAT_LIST_COLNAMES[key];
+    $('#stat-list-search').value = '';
+    renderStatListBody('');
+    $('#stat-list-modal').classList.add('visible');
+    setTimeout(function() {
+      var s = $('#stat-list-search');
+      if (s) s.focus();
+    }, 50);
+  }
+
+  function closeStatList() {
+    $('#stat-list-modal').classList.remove('visible');
+    currentStatListKey = null;
+  }
+
+  function sourcePill(sources) {
+    var hasF = sources.has('flights');
+    var hasT = sources.has('trips');
+    if (hasF && hasT) return '<span class="stat-list-source-pill both">Both</span>';
+    if (hasF)         return '<span class="stat-list-source-pill flights">Flights</span>';
+    if (hasT)         return '<span class="stat-list-source-pill trips">Trips</span>';
+    return '';
+  }
+
+  function renderStatListBody(filter) {
+    var entries = statBreakdowns[currentStatListKey] || [];
+    var f = (filter || '').trim().toLowerCase();
+    var filtered = f
+      ? entries.filter(function(e) {
+          return e.name.toLowerCase().includes(f) ||
+                 (e.sub && e.sub.toLowerCase().includes(f));
+        })
+      : entries;
+    var tbody = $('#stat-list-tbody');
+    var empty = $('#stat-list-empty');
+    if (filtered.length === 0) {
+      tbody.innerHTML = '';
+      empty.hidden = false;
+    } else {
+      empty.hidden = true;
+      tbody.innerHTML = filtered.map(function(e) {
+        var subLine = e.sub ? '<div class="stat-list-sub">' + e.sub + '</div>' : '';
+        return '<tr>' +
+          '<td><div class="stat-list-name">' + e.name + '</div>' + subLine + '</td>' +
+          '<td class="stat-list-col-count">' + e.count.toLocaleString() + '</td>' +
+          '<td class="stat-list-col-source">' + sourcePill(e.sources) + '</td>' +
+          '</tr>';
+      }).join('');
+    }
+    $('#stat-list-footer-count').textContent =
+      filtered.length + ' of ' + entries.length + (entries.length === 1 ? ' entry' : ' entries');
   }
 
   // TABS
@@ -3393,6 +3697,20 @@ window.initAdmin = function() {
       if (e.target.id === 'confirm-dialog') closeConfirm();
     });
 
+    // Stat drill-down list modal
+    $('#admin-stats-grid').addEventListener('click', function(e) {
+      var card = e.target.closest('.stat-card.clickable');
+      if (card && card.dataset.listKey) openStatList(card.dataset.listKey);
+    });
+    $('#stat-list-close').addEventListener('click', closeStatList);
+    $('#stat-list-done').addEventListener('click', closeStatList);
+    $('#stat-list-modal').addEventListener('click', function(e) {
+      if (e.target.id === 'stat-list-modal') closeStatList();
+    });
+    $('#stat-list-search').addEventListener('input', function(e) {
+      renderStatListBody(e.target.value);
+    });
+
     // Bulk delete
     $('#btn-bulk-delete').addEventListener('click', function() {
       var count = selectedFlights.size;
@@ -3657,6 +3975,7 @@ window.initAdmin = function() {
         closeTripModal();
         closeConfirm();
         closeGithubModal();
+        closeStatList();
       }
     });
   }
