@@ -653,6 +653,88 @@
   transform: translateY(10px);
   transition: transform 200ms ease;
 }
+#admin-view .modal-lg { width: 640px; }
+
+/* ====== ITINERARY LEGS ====== */
+#admin-view .itin-intro {
+  margin: -4px 0 16px;
+  line-height: 1.5;
+}
+#admin-view .flight-legs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+#admin-view .leg-card {
+  position: relative;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 14px 14px 4px 14px;
+}
+#admin-view .leg-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+#admin-view .leg-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+#admin-view .leg-remove {
+  background: transparent;
+  border: none;
+  color: var(--color-text-faint);
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 4px;
+}
+#admin-view .leg-remove:hover { color: #ef4444; background: rgba(239,68,68,0.1); }
+#admin-view .leg-card .form-row {
+  grid-template-columns: 1fr 1fr;
+}
+#admin-view .btn-add-leg {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+/* ====== TABLE: ITINERARY GROUPING ====== */
+#admin-view tr.itin-leg td:first-of-type + td,
+#admin-view tr.itin-leg td:nth-of-type(2) {
+  /* leave the leftmost data cell with a subtle accent border */
+}
+#admin-view tr.itin-leg .itin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  background: rgba(74, 122, 184, 0.12);
+  border: 1px solid rgba(74, 122, 184, 0.3);
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+#admin-view tr.itin-leg.itin-not-first td:nth-child(2) {
+  position: relative;
+}
+#admin-view tr.itin-leg.itin-not-first td:nth-child(2)::before {
+  content: '↳';
+  margin-right: 4px;
+  color: var(--color-text-faint);
+}
 
 #admin-view .modal-overlay.visible .modal {
   transform: translateY(0);
@@ -1384,7 +1466,7 @@
 
   <!-- FLIGHT MODAL -->
   <div class="modal-overlay" id="flight-modal">
-    <div class="modal">
+    <div class="modal modal-lg">
       <div class="modal-header">
         <h2 id="flight-modal-title">Add Flight</h2>
         <button class="btn-icon" id="flight-modal-close">
@@ -1392,38 +1474,12 @@
         </button>
       </div>
       <div class="modal-body">
-        <div class="form-group">
-          <label>Date</label>
-          <input type="date" class="form-input" id="flight-date">
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>From Airport</label>
-            <div class="autocomplete-wrap">
-              <input type="text" class="form-input" id="flight-from" placeholder="Type code or city..." autocomplete="off">
-              <div class="autocomplete-list" id="flight-from-ac"></div>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>To Airport</label>
-            <div class="autocomplete-wrap">
-              <input type="text" class="form-input" id="flight-to" placeholder="Type code or city..." autocomplete="off">
-              <div class="autocomplete-list" id="flight-to-ac"></div>
-            </div>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Airline</label>
-          <div class="autocomplete-wrap">
-            <input type="text" class="form-input" id="flight-airline" placeholder="Airline name" autocomplete="off">
-            <div class="autocomplete-list" id="flight-airline-ac"></div>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Distance (miles)</label>
-          <input type="number" class="form-input" id="flight-dist" placeholder="Auto-calculated if airports selected">
-          <div class="form-hint" id="flight-dist-hint"></div>
-        </div>
+        <div class="form-hint itin-intro">Add one leg for a direct flight, or add multiple legs for connections / layovers. Each leg has its own date and airline.</div>
+        <div id="flight-legs" class="flight-legs"></div>
+        <button type="button" class="btn btn-secondary btn-add-leg" id="btn-add-leg">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add layover
+        </button>
       </div>
       <div class="modal-footer">
         <button class="btn" id="flight-modal-cancel">Cancel</button>
@@ -1554,6 +1610,7 @@
       <p id="confirm-message">This action cannot be undone.</p>
       <div class="confirm-actions">
         <button class="btn" id="confirm-cancel">Cancel</button>
+        <button class="btn btn-secondary" id="confirm-secondary" hidden>Secondary</button>
         <button class="btn btn-danger" id="confirm-ok">Delete</button>
       </div>
     </div>
@@ -1982,15 +2039,23 @@ window.initAdmin = function() {
         var fromAp = data.airports[f.from];
         var toAp = data.airports[f.to];
         var isSelected = selectedFlights.has(origIdx);
-        return '<tr class="' + (isSelected ? 'selected' : '') + '" data-idx="' + origIdx + '">' +
+        var isLeg = !!f.itineraryId;
+        var legIdx = (typeof f.legIndex === 'number') ? f.legIndex : 0;
+        var legCount = f.legCount || 0;
+        var rowClass = (isSelected ? 'selected ' : '') +
+          (isLeg ? 'itin-leg ' + (legIdx > 0 ? 'itin-not-first ' : '') : '');
+        var itinBadge = isLeg && legCount > 1
+          ? '<span class="itin-badge" title="Itinerary">Leg ' + (legIdx + 1) + '/' + legCount + '</span>'
+          : '';
+        return '<tr class="' + rowClass.trim() + '" data-idx="' + origIdx + '">' +
           '<td class="checkbox-cell"><input type="checkbox" class="flight-cb" data-idx="' + origIdx + '"' + (isSelected ? ' checked' : '') + '></td>' +
-          '<td>' + formatDate(f.date) + '</td>' +
+          '<td>' + formatDate(f.date) + itinBadge + '</td>' +
           '<td><span class="airport-code">' + f.from + '</span><span class="airport-city">' + (fromAp ? fromAp.city : '') + '</span></td>' +
           '<td><span class="airport-code">' + f.to + '</span><span class="airport-city">' + (toAp ? toAp.city : '') + '</span></td>' +
           '<td><span class="airline-name">' + f.airline + '</span></td>' +
           '<td><span class="dist-value">' + (f.dist || 0).toLocaleString() + ' mi</span></td>' +
           '<td class="actions-cell">' +
-          '<button class="btn-icon edit-flight" data-idx="' + origIdx + '" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>' +
+          '<button class="btn-icon edit-flight" data-idx="' + origIdx + '" title="' + (isLeg ? 'Edit itinerary' : 'Edit') + '"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>' +
           '<button class="btn-icon danger delete-flight" data-idx="' + origIdx + '" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>' +
           '</td></tr>';
       }).join('');
@@ -2174,54 +2239,223 @@ window.initAdmin = function() {
     });
   }
 
-  // FLIGHT MODAL
+  // FLIGHT MODAL (multi-leg)
+  // editingItineraryId: when set, the modal is editing all flights that share
+  //   this id (or, if no id existed yet, just the single flight at editingFlightIndex).
+  // editingFlightIndex: legacy single-flight edit anchor used to find the
+  //   itinerary group when the user clicks Edit on any leg.
+  var editingItineraryId = null;
+
+  function genItineraryId() {
+    return 'it_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7);
+  }
+
   function openFlightModal(index) {
     if (index === undefined) index = -1;
     editingFlightIndex = index;
+    editingItineraryId = null;
     var title = $('#flight-modal-title');
+    var legs = [];
     if (index >= 0) {
-      title.textContent = 'Edit Flight';
       var f = data.flights[index];
-      $('#flight-date').value = f.date;
-      $('#flight-from').value = f.from;
-      $('#flight-to').value = f.to;
-      $('#flight-airline').value = f.airline;
-      $('#flight-dist').value = f.dist || '';
+      if (f.itineraryId) {
+        editingItineraryId = f.itineraryId;
+        legs = data.flights.filter(function(g) { return g.itineraryId === f.itineraryId; })
+                            .slice() // copy
+                            .sort(function(a, b) { return (a.legIndex || 0) - (b.legIndex || 0); });
+      } else {
+        legs = [f];
+      }
+      title.textContent = legs.length > 1 ? 'Edit Itinerary' : 'Edit Flight';
     } else {
       title.textContent = 'Add Flight';
-      $('#flight-date').value = '';
-      $('#flight-from').value = '';
-      $('#flight-to').value = '';
-      $('#flight-airline').value = '';
-      $('#flight-dist').value = '';
-      $('#flight-dist-hint').textContent = '';
+      legs = [{ date: '', from: '', to: '', airline: '', dist: 0 }];
     }
+    renderLegs(legs);
     $('#flight-modal').classList.add('visible');
   }
 
   function closeFlightModal() {
     $('#flight-modal').classList.remove('visible');
     $$('.autocomplete-list').forEach(function(l) { l.classList.remove('open'); });
+    editingItineraryId = null;
+  }
+
+  function renderLegs(legs) {
+    var container = $('#flight-legs');
+    container.innerHTML = '';
+    legs.forEach(function(leg, i) {
+      container.appendChild(buildLegCard(leg, i, legs.length));
+    });
+    updateLegLabels();
+  }
+
+  function updateLegLabels() {
+    var cards = $$('#flight-legs .leg-card');
+    cards.forEach(function(card, i) {
+      var label = card.querySelector('.leg-label');
+      if (cards.length === 1) {
+        label.textContent = 'Flight';
+      } else {
+        label.textContent = 'Leg ' + (i + 1) + ' of ' + cards.length;
+      }
+      var rm = card.querySelector('.leg-remove');
+      if (rm) rm.style.display = cards.length > 1 ? '' : 'none';
+    });
+  }
+
+  function buildLegCard(leg, i, totalLegs) {
+    leg = leg || {};
+    var card = document.createElement('div');
+    card.className = 'leg-card';
+    card.innerHTML =
+      '<div class="leg-header">' +
+        '<span class="leg-label">Leg</span>' +
+        '<button type="button" class="btn-icon leg-remove" title="Remove leg">' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+        '</button>' +
+      '</div>' +
+      '<div class="form-group">' +
+        '<label>Date</label>' +
+        '<input type="date" class="form-input leg-date">' +
+      '</div>' +
+      '<div class="form-row">' +
+        '<div class="form-group">' +
+          '<label>From Airport</label>' +
+          '<div class="autocomplete-wrap">' +
+            '<input type="text" class="form-input leg-from" placeholder="Type code or city..." autocomplete="off">' +
+            '<div class="autocomplete-list"></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="form-group">' +
+          '<label>To Airport</label>' +
+          '<div class="autocomplete-wrap">' +
+            '<input type="text" class="form-input leg-to" placeholder="Type code or city..." autocomplete="off">' +
+            '<div class="autocomplete-list"></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="form-row">' +
+        '<div class="form-group">' +
+          '<label>Airline</label>' +
+          '<div class="autocomplete-wrap">' +
+            '<input type="text" class="form-input leg-airline" placeholder="Airline name" autocomplete="off">' +
+            '<div class="autocomplete-list"></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="form-group">' +
+          '<label>Distance (miles)</label>' +
+          '<input type="number" class="form-input leg-dist" placeholder="Auto-calculated">' +
+          '<div class="form-hint leg-dist-hint"></div>' +
+        '</div>' +
+      '</div>';
+
+    var dateEl = card.querySelector('.leg-date');
+    var fromEl = card.querySelector('.leg-from');
+    var toEl = card.querySelector('.leg-to');
+    var airlineEl = card.querySelector('.leg-airline');
+    var distEl = card.querySelector('.leg-dist');
+    var fromAc = card.querySelectorAll('.autocomplete-list')[0];
+    var toAc = card.querySelectorAll('.autocomplete-list')[1];
+    var airlineAc = card.querySelectorAll('.autocomplete-list')[2];
+
+    dateEl.value = leg.date || '';
+    fromEl.value = leg.from || '';
+    toEl.value = (leg.to || '').toUpperCase();
+    airlineEl.value = leg.airline || '';
+    distEl.value = leg.dist || '';
+
+    function recalc() {
+      var from = fromEl.value.toUpperCase().trim();
+      var to = toEl.value.toUpperCase().trim();
+      var hint = card.querySelector('.leg-dist-hint');
+      if (data.airports[from] && data.airports[to]) {
+        var d = haversineDistance(
+          data.airports[from].lat, data.airports[from].lng,
+          data.airports[to].lat, data.airports[to].lng
+        );
+        if (!distEl.value || distEl.value === '0') distEl.value = d;
+        hint.textContent = 'Calculated: ' + d.toLocaleString() + ' mi (' + data.airports[from].city + ' → ' + data.airports[to].city + ')';
+      } else {
+        hint.textContent = '';
+      }
+    }
+    fromEl.addEventListener('change', recalc);
+    toEl.addEventListener('change', recalc);
+    fromEl.addEventListener('blur', recalc);
+    toEl.addEventListener('blur', recalc);
+
+    setupAirportAutocomplete(fromEl, fromAc, recalc);
+    setupAirportAutocomplete(toEl, toAc, recalc);
+    setupAirlineAutocompleteOn(airlineEl, airlineAc);
+
+    card.querySelector('.leg-remove').addEventListener('click', function() {
+      var cards = $$('#flight-legs .leg-card');
+      if (cards.length <= 1) return;
+      card.remove();
+      updateLegLabels();
+    });
+
+    return card;
+  }
+
+  function readLegsFromModal() {
+    return Array.prototype.map.call($$('#flight-legs .leg-card'), function(card) {
+      return {
+        date: card.querySelector('.leg-date').value,
+        from: card.querySelector('.leg-from').value.toUpperCase().trim(),
+        to: card.querySelector('.leg-to').value.toUpperCase().trim(),
+        airline: card.querySelector('.leg-airline').value.trim(),
+        dist: parseInt(card.querySelector('.leg-dist').value) || 0,
+      };
+    });
   }
 
   function saveFlightFromModal() {
-    var date = $('#flight-date').value;
-    var from = $('#flight-from').value.toUpperCase().trim();
-    var to = $('#flight-to').value.toUpperCase().trim();
-    var airline = $('#flight-airline').value.trim();
-    var dist = parseInt($('#flight-dist').value) || 0;
-    if (!date || !from || !to || !airline) {
-      showToast('Please fill all required fields', 'error');
+    var legs = readLegsFromModal();
+    if (legs.length === 0) {
+      showToast('Please add at least one leg', 'error');
       return;
     }
-    var flight = { date: date, from: from, to: to, airline: airline, dist: dist };
-    if (editingFlightIndex >= 0) {
-      data.flights[editingFlightIndex] = flight;
-      showToast('Flight updated');
-    } else {
-      data.flights.push(flight);
-      showToast('Flight added');
+    for (var i = 0; i < legs.length; i++) {
+      var L = legs[i];
+      if (!L.date || !L.from || !L.to || !L.airline) {
+        showToast('Please fill all fields on leg ' + (i + 1), 'error');
+        return;
+      }
     }
+
+    var isMulti = legs.length > 1;
+    var itinId = isMulti ? (editingItineraryId || genItineraryId()) : null;
+
+    // Build the new flight records.
+    var newRecords = legs.map(function(L, i) {
+      var rec = { date: L.date, from: L.from, to: L.to, airline: L.airline, dist: L.dist };
+      if (itinId) {
+        rec.itineraryId = itinId;
+        rec.legIndex = i;
+        rec.legCount = legs.length;
+      }
+      return rec;
+    });
+
+    // Remove the previously edited record(s).
+    if (editingItineraryId) {
+      data.flights = data.flights.filter(function(f) { return f.itineraryId !== editingItineraryId; });
+    } else if (editingFlightIndex >= 0) {
+      data.flights.splice(editingFlightIndex, 1);
+    }
+
+    // Append the new ones.
+    newRecords.forEach(function(r) { data.flights.push(r); });
+
+    var msg;
+    if (editingFlightIndex >= 0 || editingItineraryId) {
+      msg = isMulti ? 'Itinerary updated (' + legs.length + ' legs)' : 'Flight updated';
+    } else {
+      msg = isMulti ? 'Itinerary added (' + legs.length + ' legs)' : 'Flight added';
+    }
+    showToast(msg);
     saveToStorage();
     closeFlightModal();
     renderAll();
@@ -2647,24 +2881,36 @@ window.initAdmin = function() {
     });
   }
 
-  // CONFIRM
-  function showConfirm(title, message, okLabel, onConfirm) {
+  // CONFIRM — supports an optional secondary action (e.g. "Delete just this leg").
+  var confirmSecondaryCallback = null;
+  function showConfirm(title, message, okLabel, onConfirm, secondaryLabel, onSecondary) {
     $('#confirm-title').textContent = title;
     $('#confirm-message').textContent = message;
     $('#confirm-ok').textContent = okLabel;
     confirmCallback = onConfirm;
+    var sec = $('#confirm-secondary');
+    if (secondaryLabel && typeof onSecondary === 'function') {
+      sec.textContent = secondaryLabel;
+      sec.hidden = false;
+      confirmSecondaryCallback = onSecondary;
+    } else {
+      sec.hidden = true;
+      confirmSecondaryCallback = null;
+    }
     $('#confirm-dialog').classList.add('visible');
   }
 
   function closeConfirm() {
     $('#confirm-dialog').classList.remove('visible');
     confirmCallback = null;
+    confirmSecondaryCallback = null;
   }
 
   // AUTOCOMPLETE
-  function setupAirportAutocomplete(inputId, listId) {
-    var input = $('#' + inputId);
-    var list = $('#' + listId);
+  function setupAirportAutocomplete(inputOrId, listOrId, onPick) {
+    var input = typeof inputOrId === 'string' ? $('#' + inputOrId) : inputOrId;
+    var list = typeof listOrId === 'string' ? $('#' + listOrId) : listOrId;
+    if (!input || !list) return;
     var highlightIndex = -1;
 
     input.addEventListener('input', function() {
@@ -2689,7 +2935,8 @@ window.initAdmin = function() {
           input.value = item.dataset.value;
           list.classList.remove('open');
           input.dispatchEvent(new Event('change'));
-          autoCalcDistance();
+          if (typeof onPick === 'function') onPick();
+          else autoCalcDistance();
         });
       });
     });
@@ -2714,7 +2961,8 @@ window.initAdmin = function() {
         if (highlightIndex >= 0 && items[highlightIndex]) {
           input.value = items[highlightIndex].dataset.value;
           list.classList.remove('open');
-          autoCalcDistance();
+          if (typeof onPick === 'function') onPick();
+          else autoCalcDistance();
         }
       } else if (e.key === 'Escape') {
         list.classList.remove('open');
@@ -2722,11 +2970,9 @@ window.initAdmin = function() {
     });
   }
 
-  function setupAirlineAutocomplete() {
-    var input = $('#flight-airline');
-    var list = $('#flight-airline-ac');
+  function setupAirlineAutocompleteOn(input, list) {
+    if (!input || !list) return;
     var highlightIndex = -1;
-
     input.addEventListener('input', function() {
       var val = input.value.toLowerCase();
       if (val.length === 0) { list.classList.remove('open'); return; }
@@ -2735,7 +2981,7 @@ window.initAdmin = function() {
         .slice(0, 8);
       if (airlines.length === 0) { list.classList.remove('open'); return; }
       list.innerHTML = airlines.map(function(a) {
-        return '<div class="autocomplete-item" data-value="' + a + '">' + a + '</div>';
+        return '<div class="autocomplete-item" data-value="' + a.replace(/"/g, '&quot;') + '">' + a + '</div>';
       }).join('');
       list.classList.add('open');
       highlightIndex = -1;
@@ -2747,11 +2993,9 @@ window.initAdmin = function() {
         });
       });
     });
-
     input.addEventListener('blur', function() {
       setTimeout(function() { list.classList.remove('open'); }, 150);
     });
-
     input.addEventListener('keydown', function(e) {
       var items = list.querySelectorAll('.autocomplete-item');
       if (!list.classList.contains('open') || items.length === 0) return;
@@ -2775,11 +3019,17 @@ window.initAdmin = function() {
     });
   }
 
+  // Legacy stub: previously updated #flight-from/#flight-to. Kept as a no-op
+  // because some code paths still call autoCalcDistance() generically.
   function autoCalcDistance() {
-    var from = $('#flight-from').value.toUpperCase().trim();
-    var to = $('#flight-to').value.toUpperCase().trim();
+    var from = ''; var to = '';
+    var fromEl = $('#flight-from');
+    var toEl = $('#flight-to');
+    if (fromEl) from = fromEl.value.toUpperCase().trim();
+    if (toEl) to = toEl.value.toUpperCase().trim();
     var distInput = $('#flight-dist');
     var hint = $('#flight-dist-hint');
+    if (!distInput || !hint) return;
     if (data.airports[from] && data.airports[to]) {
       var d = haversineDistance(
         data.airports[from].lat, data.airports[from].lng,
@@ -2938,17 +3188,54 @@ window.initAdmin = function() {
       } else if (deleteBtn) {
         var idx = parseInt(deleteBtn.dataset.idx);
         var f = data.flights[idx];
-        showConfirm('Delete Flight',
-          'Delete flight ' + f.from + ' → ' + f.to + ' on ' + formatDate(f.date) + '?',
-          'Delete',
-          function() {
-            data.flights.splice(idx, 1);
-            selectedFlights.clear();
-            saveToStorage();
-            showToast('Flight deleted');
-            renderAll();
-          }
-        );
+        if (f.itineraryId) {
+          var itin = f.itineraryId;
+          var siblings = data.flights.filter(function(g) { return g.itineraryId === itin; });
+          var legCount = siblings.length;
+          var msg = 'This flight is part of a ' + legCount + '-leg itinerary. ' +
+                    'Delete just this leg, or the whole itinerary?';
+          showConfirm('Delete Leg or Itinerary?', msg, 'Delete entire itinerary',
+            function() {
+              data.flights = data.flights.filter(function(g) { return g.itineraryId !== itin; });
+              selectedFlights.clear();
+              saveToStorage();
+              showToast('Itinerary deleted (' + legCount + ' legs)');
+              renderAll();
+            },
+            'Delete just this leg',
+            function() {
+              data.flights.splice(idx, 1);
+              // If only one leg now remains, strip itinerary metadata so it
+              // becomes a regular flight again.
+              var remaining = data.flights.filter(function(g) { return g.itineraryId === itin; });
+              if (remaining.length === 1) {
+                delete remaining[0].itineraryId;
+                delete remaining[0].legIndex;
+                delete remaining[0].legCount;
+              } else {
+                // Re-number remaining legs.
+                remaining.sort(function(a, b) { return (a.legIndex || 0) - (b.legIndex || 0); });
+                remaining.forEach(function(g, i) { g.legIndex = i; g.legCount = remaining.length; });
+              }
+              selectedFlights.clear();
+              saveToStorage();
+              showToast('Leg deleted');
+              renderAll();
+            }
+          );
+        } else {
+          showConfirm('Delete Flight',
+            'Delete flight ' + f.from + ' → ' + f.to + ' on ' + formatDate(f.date) + '?',
+            'Delete',
+            function() {
+              data.flights.splice(idx, 1);
+              selectedFlights.clear();
+              saveToStorage();
+              showToast('Flight deleted');
+              renderAll();
+            }
+          );
+        }
       }
     });
 
@@ -3029,6 +3316,23 @@ window.initAdmin = function() {
     $('#flight-modal').addEventListener('click', function(e) {
       if (e.target.id === 'flight-modal') closeFlightModal();
     });
+    $('#btn-add-leg').addEventListener('click', function() {
+      var legs = $$('#flight-legs .leg-card');
+      var prefill = { date: '', from: '', to: '', airline: '', dist: 0 };
+      // Smart prefill: chain from the previous leg's destination, copy date+airline.
+      if (legs.length > 0) {
+        var last = legs[legs.length - 1];
+        prefill.from = last.querySelector('.leg-to').value.toUpperCase().trim();
+        prefill.date = last.querySelector('.leg-date').value;
+        prefill.airline = last.querySelector('.leg-airline').value;
+      }
+      var card = buildLegCard(prefill);
+      $('#flight-legs').appendChild(card);
+      updateLegLabels();
+      // Focus the first empty field on the new leg.
+      var toFocus = card.querySelector(prefill.from ? '.leg-to' : '.leg-from');
+      if (toFocus) toFocus.focus();
+    });
 
     // Airport modal
     $('#airport-modal-close').addEventListener('click', closeAirportModal);
@@ -3079,6 +3383,10 @@ window.initAdmin = function() {
     $('#confirm-cancel').addEventListener('click', closeConfirm);
     $('#confirm-ok').addEventListener('click', function() {
       if (confirmCallback) confirmCallback();
+      closeConfirm();
+    });
+    $('#confirm-secondary').addEventListener('click', function() {
+      if (confirmSecondaryCallback) confirmSecondaryCallback();
       closeConfirm();
     });
     $('#confirm-dialog').addEventListener('click', function(e) {
@@ -3338,14 +3646,8 @@ window.initAdmin = function() {
       showToast('Token cleared');
     });
 
-    // Auto-calc distance
-    $('#flight-from').addEventListener('change', autoCalcDistance);
-    $('#flight-to').addEventListener('change', autoCalcDistance);
-
-    // Autocomplete
-    setupAirportAutocomplete('flight-from', 'flight-from-ac');
-    setupAirportAutocomplete('flight-to', 'flight-to-ac');
-    setupAirlineAutocomplete();
+    // Per-leg autocomplete + distance is wired up dynamically when each leg
+    // card is rendered (see attachLegHandlers).
 
     // Keyboard shortcuts
     document.addEventListener('keydown', function(e) {
