@@ -649,9 +649,9 @@ async function loadCountryOutlines() {
     const geometries = countries.geometries;
 
     const outlineMat = new THREE.LineBasicMaterial({
-      color: 0x1a3050,
+      color: 0x4a7ab8,
       transparent: true,
-      opacity: 0.5,
+      opacity: 0.75,
     });
 
     const outlineGroup = new THREE.Group();
