@@ -557,6 +557,12 @@
       "lng": 103.8198,
       "city": "Singapore",
       "country": "Singapore"
+    },
+    "PRG": {
+      "lat": 50.0755,
+      "lng": 14.4378,
+      "city": "Prague",
+      "country": "CZECH REPUBLIC"
     }
   },
   "flights": [
@@ -3870,6 +3876,46 @@
       "airline": "Singapore Airlines",
       "dist": 5619,
       "itineraryId": "it_mot6yzle_gcbh3",
+      "legIndex": 3,
+      "legCount": 4
+    },
+    {
+      "date": "2014-08-29",
+      "from": "SFO",
+      "to": "ZRH",
+      "airline": "Lufthansa",
+      "dist": 5826,
+      "itineraryId": "it_mot7bqjt_k8aj7",
+      "legIndex": 0,
+      "legCount": 4
+    },
+    {
+      "date": "2014-08-30",
+      "from": "ZRH",
+      "to": "PRG",
+      "airline": "Lufthansa",
+      "dist": 323,
+      "itineraryId": "it_mot7bqjt_k8aj7",
+      "legIndex": 1,
+      "legCount": 4
+    },
+    {
+      "date": "2014-09-09",
+      "from": "VIE",
+      "to": "ZRH",
+      "airline": "Lufthansa",
+      "dist": 375,
+      "itineraryId": "it_mot7bqjt_k8aj7",
+      "legIndex": 2,
+      "legCount": 4
+    },
+    {
+      "date": "2014-09-09",
+      "from": "ZRH",
+      "to": "SFO",
+      "airline": "Lufthansa",
+      "dist": 5826,
+      "itineraryId": "it_mot7bqjt_k8aj7",
       "legIndex": 3,
       "legCount": 4
     }
