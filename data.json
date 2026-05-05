@@ -3731,20 +3731,6 @@
       "dist": 5684
     },
     {
-      "date": "2014-09-09",
-      "from": "ZRH",
-      "to": "SFO",
-      "airline": "Swiss International Air Lines",
-      "dist": 5826
-    },
-    {
-      "date": "2014-09-09",
-      "from": "VIE",
-      "to": "ZRH",
-      "airline": "Swiss International Air Lines",
-      "dist": 375
-    },
-    {
       "date": "2014-05-07",
       "from": "LAS",
       "to": "SFO",
@@ -4141,32 +4127,6 @@
       "fromLat": 27.708317,
       "fromLng": 85.3205817,
       "tripMiles": 237
-    },
-    {
-      "date": "2014-09-02",
-      "city": "Budapest",
-      "country": "Hungry",
-      "lat": 47.4979,
-      "lng": 19.0402,
-      "mode": "Train",
-      "from": "Prague, CZECH REPUBLIC",
-      "notes": "",
-      "fromLat": 50.0755,
-      "fromLng": 14.4378,
-      "tripMiles": 275
-    },
-    {
-      "date": "2014-09-05",
-      "city": "Vienna",
-      "country": "Austria",
-      "lat": 48.2082,
-      "lng": 16.3738,
-      "mode": "Train",
-      "from": "Budapest, Hungry",
-      "notes": "",
-      "fromLat": 47.4979,
-      "fromLng": 19.0402,
-      "tripMiles": 133
     }
   ],
   "settings": {
