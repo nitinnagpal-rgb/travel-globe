@@ -545,6 +545,18 @@
       "lng": -95.2789,
       "city": "Houston Hobby",
       "country": "USA"
+    },
+    "HKG": {
+      "lat": 22.3193,
+      "lng": 114.1694,
+      "city": "Hong Kong",
+      "country": "China"
+    },
+    "SIN": {
+      "lat": 1.3521,
+      "lng": 103.8198,
+      "city": "Singapore",
+      "country": "Singapore"
     }
   },
   "flights": [
@@ -3818,6 +3830,46 @@
       "airline": "American Airlines",
       "dist": 2581,
       "itineraryId": "it_mot2kaqh_n2azz",
+      "legIndex": 3,
+      "legCount": 4
+    },
+    {
+      "date": "2014-02-22",
+      "from": "SFO",
+      "to": "HKG",
+      "airline": "Singapore Airlines",
+      "dist": 6903,
+      "itineraryId": "it_mot6yzle_gcbh3",
+      "legIndex": 0,
+      "legCount": 4
+    },
+    {
+      "date": "2014-02-23",
+      "from": "HKG",
+      "to": "SIN",
+      "airline": "Singapore Airlines",
+      "dist": 1607,
+      "itineraryId": "it_mot6yzle_gcbh3",
+      "legIndex": 1,
+      "legCount": 4
+    },
+    {
+      "date": "2014-02-27",
+      "from": "SIN",
+      "to": "ICN",
+      "airline": "Singapore Airlines",
+      "dist": 1607,
+      "itineraryId": "it_mot6yzle_gcbh3",
+      "legIndex": 2,
+      "legCount": 4
+    },
+    {
+      "date": "2014-02-27",
+      "from": "ICN",
+      "to": "SFO",
+      "airline": "Singapore Airlines",
+      "dist": 5619,
+      "itineraryId": "it_mot6yzle_gcbh3",
       "legIndex": 3,
       "legCount": 4
     }
