@@ -3760,6 +3760,26 @@
       "to": "ICN",
       "airline": "Asiana Airlines",
       "dist": 2920
+    },
+    {
+      "date": "2006-01-09",
+      "from": "SFO",
+      "to": "DEN",
+      "airline": "Frontier Airlines",
+      "dist": 965,
+      "itineraryId": "it_mot10nzx_r2sf9",
+      "legIndex": 0,
+      "legCount": 2
+    },
+    {
+      "date": "2006-01-09",
+      "from": "DEN",
+      "to": "MSP",
+      "airline": "Frontier Airlines",
+      "dist": 679,
+      "itineraryId": "it_mot10nzx_r2sf9",
+      "legIndex": 1,
+      "legCount": 2
     }
   ],
   "trips": [
