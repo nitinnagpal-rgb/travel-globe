@@ -4153,6 +4153,32 @@
       "fromLat": 47.4979,
       "fromLng": 19.0402,
       "tripMiles": 133
+    },
+    {
+      "date": "2025-04-06",
+      "city": "Santa Barbara",
+      "country": "USA",
+      "lat": 34.4262,
+      "lng": -119.8404,
+      "mode": "Car",
+      "from": "Los Altos, USA",
+      "notes": "",
+      "fromLat": 37.3790629,
+      "fromLng": -122.116578,
+      "tripMiles": 241
+    },
+    {
+      "date": "2025-04-10",
+      "city": "Los Altos",
+      "country": "USA",
+      "lat": 37.3791,
+      "lng": -122.1166,
+      "mode": "Car",
+      "from": "Santa Barbara, USA",
+      "notes": "",
+      "fromLat": 34.4262,
+      "fromLng": -119.8404,
+      "tripMiles": 241
     }
   ],
   "settings": {
