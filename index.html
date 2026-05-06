@@ -1353,7 +1353,7 @@
         <button class="btn btn-sm" id="btn-github-settings" title="GitHub publish settings">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         </button>
-        <button class="btn btn-sm btn-success" id="btn-publish-github" title="Publish to GitHub Pages">
+        <button class="btn btn-sm btn-success" id="btn-publish-github" title="Publish to Vercel (commits to GitHub, Vercel auto-deploys)">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
           <span>Publish</span>
         </button>
@@ -1483,7 +1483,7 @@
       <div class="settings-wrap">
         <div class="settings-intro">
           <h2>Globe View Customisation</h2>
-          <p>Customise the public globe view — header text, fonts, and colors. Click <strong>Save Settings</strong>, then publish to GitHub for the live site to update.</p>
+          <p>Customise the public globe view — header text, fonts, and colors. Click <strong>Save Settings</strong>, then publish for the live Vercel site to update.</p>
         </div>
 
         <div class="settings-section">
@@ -1750,14 +1750,14 @@
   <div class="modal-overlay" id="github-modal">
     <div class="modal">
       <div class="modal-header">
-        <h2>GitHub Publish Settings</h2>
+        <h2>Publish Settings</h2>
         <button class="btn-icon" id="github-modal-close">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
       <div class="modal-body">
         <div class="form-hint" style="margin-bottom:14px;line-height:1.5;">
-          To publish changes directly to your live globe, you need a GitHub Personal Access Token. The token is stored only in this browser and never sent anywhere except to GitHub itself.
+          Publishing commits the latest data to your GitHub repo, which Vercel automatically picks up and redeploys (~30–60s). You need a GitHub Personal Access Token — stored only in this browser and sent only to GitHub.
         </div>
         <div class="form-group">
           <label>GitHub Personal Access Token</label>
@@ -3886,7 +3886,7 @@ window.initAdmin = function() {
       var originalHTML = btn.innerHTML;
       btn.disabled = true;
       btn.innerHTML = '<span class="geo-spinner"></span><span>Publishing…</span>';
-      showToast('Publishing to GitHub…');
+      showToast('Publishing… (commit → Vercel auto-deploy)');
 
       var json = JSON.stringify(data, null, 2);
       var commitMsg = 'Update data.json from admin (' + new Date().toISOString().slice(0, 19).replace('T', ' ') + ' UTC)';
@@ -3898,7 +3898,7 @@ window.initAdmin = function() {
           btn.innerHTML = originalHTML;
           if (result.ok) {
             var commitUrl = (result.body.commit && result.body.commit.html_url) || '';
-            showToast('Published! GitHub Pages will refresh in ~30–60 seconds.');
+            showToast('Published! Vercel will redeploy in ~30–60 seconds.');
             console.log('Commit:', commitUrl);
           } else {
             var msg = (result.body && result.body.message) || ('HTTP ' + result.status);
